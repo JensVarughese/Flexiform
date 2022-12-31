@@ -6,11 +6,14 @@ using UnityEngine.Networking;
 using System.IO;
 using System.Text;
 using Dummiesman;
+using TMPro;
+using System;
 
 public class FileExplorer: MonoBehaviour
 {
     private RawImage rawImage;
     private Transform handModel;
+    //public GameObject text;
 
     public void OpenFileBrowser()
     {
@@ -41,28 +44,6 @@ public class FileExplorer: MonoBehaviour
             }
         }
     }
-
-    //IEnumerator LoadFile(string path)
-    //{
-    //    using (UnityWebRequest uwr = UnityWebRequest.Get(path))
-    //    {
-    //        const string fileName = "designHand.obj";
-    //        var outputPath = Path.Combine(Directory.GetCurrentDirectory(), "Assets/Resources/" +  fileName);
-    //        uwr.downloadHandler = new DownloadHandlerFile(outputPath);
-    //        yield return uwr.SendWebRequest();
-
-    //        if (uwr.result != UnityWebRequest.Result.Success)
-    //        {
-    //            Debug.Log(uwr.error);
-    //        }
-    //        else
-    //        {
-    //            //var uwrTexture = DownloadHandlerFile.;
-    //            Debug.Log("File successfully downloaded and saved to " + outputPath);
-    //            FileImporter.LoadObject("designHand");
-    //        }
-    //    }
-    //}
 
     IEnumerator LoadFile1(string path)
     {
