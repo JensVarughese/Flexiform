@@ -2455,6 +2455,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   handObj: {fileID: 2000756028}
+  casingMaterial: {fileID: 2100000, guid: 3c5cc73274db890459cafeb6387560e7, type: 2}
 --- !u!4 &1272389267
 Transform:
   m_ObjectHideFlags: 0

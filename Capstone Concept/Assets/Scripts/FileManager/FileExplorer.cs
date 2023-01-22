@@ -1,7 +1,9 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_STANDALONE_WIN
 using AnotherFileBrowser.Windows;
+#endif
 using UnityEngine.Networking;
 using System.IO;
 using System.Text;
@@ -17,6 +19,7 @@ public class FileExplorer: MonoBehaviour
 
     public void OpenFileBrowser()
     {
+#if UNITY_STANDALONE_WIN
         var bp = new BrowserProperties();
         bp.filter = "Image files | *.obj";
         bp.filterIndex = 0;
@@ -25,6 +28,7 @@ public class FileExplorer: MonoBehaviour
         {
             StartCoroutine(LoadFile1(path));
         });
+#endif
     }
 
     IEnumerator LoadImage(string path)

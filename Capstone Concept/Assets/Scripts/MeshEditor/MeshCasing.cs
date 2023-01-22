@@ -3,14 +3,9 @@ using UnityEngine;
 public class MeshCasing : MonoBehaviour
 {
     public GameObject handObj;
+    public Material casingMaterial;
     // Start is called before the first frame update
     void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
     {
         
     }
@@ -21,7 +16,11 @@ public class MeshCasing : MonoBehaviour
         var mesh = handtransform.GetComponent<MeshFilter>().mesh;
         var normals = mesh.normals;
         var verts = mesh.vertices;
-        Debug.Log(verts.Length);
-        Debug.Log(normals.Length);
+
+        var casing = Instantiate(handObj, new Vector3(100.0f, 0, 0), Quaternion.identity);
+        casing.name = "Hand Casing";
+        casing.transform.GetChild(0).GetComponent<MeshRenderer>().material = casingMaterial;
+
+        Debug.Log("Casing Generated");
     }
 }

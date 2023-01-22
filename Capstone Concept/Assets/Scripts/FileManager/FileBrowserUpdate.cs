@@ -1,5 +1,7 @@
 ﻿
+#if UNITY_STANDALONE_WIN
 using AnotherFileBrowser.Windows;
+#endif
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,6 +14,7 @@ public class FileBrowserUpdate : MonoBehaviour
 
     public void OpenFileBrowser()
     {
+#if UNITY_STANDALONE_WIN
         var bp = new BrowserProperties();
         bp.filter = "Image files (*.jpg, *.jpeg, *.jpe, *.jfif, *.png) | *.jpg; *.jpeg; *.jpe; *.jfif; *.png";
         bp.filterIndex = 0;
@@ -21,6 +24,7 @@ public class FileBrowserUpdate : MonoBehaviour
             //Load image from local path with UWR
             StartCoroutine(LoadImage(path));
         });
+#endif
     }
 
     IEnumerator LoadImage(string path)
