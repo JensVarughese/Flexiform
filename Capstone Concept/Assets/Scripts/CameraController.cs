@@ -62,7 +62,7 @@ public class CameraController : MonoBehaviour
 
         var edgeCase1 = isBet(xRot, 70, 180) && diffY < 0;
         var edgeCase2 = isBet(xRot, 180, 290) && diffY > 0;
-        if (isBet(xRot, 0, 70) || isBet(xRot, 290, 360) || edgeCase1 || edgeCase2) 
+        if (isBet(xRot, -1, 70) || isBet(xRot, 290, 360) || edgeCase1 || edgeCase2) 
             transform.Translate(Vector3.up * diffY * rotationScale);
 
         cameraTransform.LookAt(handCenter);
