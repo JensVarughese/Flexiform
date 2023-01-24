@@ -2,36 +2,32 @@ using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 using System;
+using UnityEngine.UI;
+using TMPro;
 
 public class MeshCasing : MonoBehaviour
 {
-    [Range(1.0f, 10.0f)]
-    public float thicknessInMillimeters = 1;
     public GameObject handObj;
     public Material casingMaterial;
+    public GameObject CasingPanel;
     private bool isCasingGenerated = false;
+    private float thicknessInMillimeters = 1;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
+    /// <summary>
+    /// 
+    /// </summary>
     public void generateCasing()
     {
         if(isCasingGenerated) {
-            Debug.Log("not again");
             return;
         }
         
-        var handtransform = handObj.transform.GetChild(0);
         var casing = Instantiate(handObj, new Vector3(0, 0, 0), Quaternion.identity);
 
         var mesh = casing.transform.GetChild(0).GetComponent<MeshFilter>().mesh;
         var normals = mesh.normals;
         var innerVerts = mesh.vertices;
         var innerTriangles = mesh.triangles;
-        var vertsSize = innerVerts.Length;
 
         // create outer mesh
         var outerVerts = new Vector3[innerVerts.Length];
@@ -44,9 +40,6 @@ public class MeshCasing : MonoBehaviour
         for(var i = 0; i < outerTraingles.Length; i++) {
             outerTraingles[i] = innerTriangles[i] + innerVerts.Length;
         }
-
-        float f = 10.123456f;
-        var fc = (float)Math.Round(f, 2);
 
         // flip inner mesh
         for(var i = 0; i < innerTriangles.Length; i += 3) {
@@ -65,8 +58,38 @@ public class MeshCasing : MonoBehaviour
         casing.transform.GetChild(0).GetComponent<MeshRenderer>().material = casingMaterial;
 
         isCasingGenerated = true;
+        CasingPanel.SetActive(false);
     }
 
+    public void setThickness(Slider slider)
+    {
+        thicknessInMillimeters = slider.value;
+    }
+    public void updateSliderValue(GameObject text)
+    {
+        var textValue = text.GetComponent<TextMeshProUGUI>();
+        textValue.text = Math.Round(thicknessInMillimeters, 2).ToString() + "mm";
+    }
+
+    public void openCasingPanel()
+    {
+        if(isCasingGenerated) { return; }
+
+        CasingPanel.SetActive(true);
+    }
+
+    public void closeCasingPanel()
+    {
+        CasingPanel.SetActive(false);
+    }
+
+    /// <summary>
+    /// Gets a normal of a nearby vertex, or returns its current normal
+    /// </summary>
+    /// <param name="normalsCollection"> Dictionary of saved normal vector</param>
+    /// <param name="normal">normal vector of vertex</param>
+    /// <param name="vert">specified vertex for normal calculation</param>
+    /// <returns>The ideal normal vector</returns>
     private Vector3 GetNormal(ref Dictionary<Vector3, Vector3> normalsCollection, Vector3 normal, Vector3 vert) {
         var roundedVert = new Vector3(
             (float)Math.Round(vert.x, 1), 
