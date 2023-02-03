@@ -1071,11 +1071,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: -0, y: -0.99362314, z: -0, w: 0.11275217}
-  m_LocalPosition: {x: -12.399994, y: 35.2, z: -28.100006}
+  m_LocalPosition: {x: 31.714523, y: 42.454067, z: 194.32971}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1866565654}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: -167.052, z: 0}
 --- !u!114 &963194229
@@ -1562,9 +1562,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2940665dbf80d974db91e729192f9ab2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  thicknessInMillimeters: 3
   handObj: {fileID: 2000756028}
   casingMaterial: {fileID: 2100000, guid: 3c5cc73274db890459cafeb6387560e7, type: 2}
-  CasingPanel: {fileID: 1486180530}
 --- !u!4 &1272389267
 Transform:
   m_ObjectHideFlags: 0
@@ -2410,7 +2410,39 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1729404536}
   m_CullTransparentMesh: 1
---- !u!1 &1750054530
+--- !u!1 &1866565653
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1866565654}
+  m_Layer: 0
+  m_Name: CameraFocalPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1866565654
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1866565653}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -44.114517, y: -7.2540665, z: -222.42972}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 963194228}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1889867779
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
