@@ -10,6 +10,8 @@ public class MeshCasing : MonoBehaviour
     public GameObject handObj;
     public Material casingMaterial;
     public GameObject CasingPanel;
+
+    private GameObject casing;
     private bool isCasingGenerated = false;
     private float thicknessInMillimeters = 1;
 
@@ -22,7 +24,7 @@ public class MeshCasing : MonoBehaviour
             return;
         }
         
-        var casing = Instantiate(handObj, new Vector3(0, 0, 0), Quaternion.identity);
+        casing = Instantiate(handObj, new Vector3(0, 0, 0), Quaternion.identity);
 
         var mesh = casing.transform.GetChild(0).GetComponent<MeshFilter>().mesh;
         var normals = mesh.normals;
