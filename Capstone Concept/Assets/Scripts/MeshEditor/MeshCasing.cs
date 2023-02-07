@@ -12,6 +12,7 @@ public class MeshCasing : MonoBehaviour
     public GameObject CasingPanel;
     private bool isCasingGenerated = false;
     private float thicknessInMillimeters = 1;
+    FileExplorer fileExplorer;
 
     /// <summary>
     /// 
@@ -22,6 +23,10 @@ public class MeshCasing : MonoBehaviour
         {
             return;
         }
+
+        fileExplorer = GameObject.Find("FileManager").GetComponent<FileExplorer>();
+
+        handObj = fileExplorer.model;
 
         var casing = Instantiate(handObj, new Vector3(0, 0, 0), Quaternion.identity);
 

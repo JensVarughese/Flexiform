@@ -9,10 +9,28 @@ public class CameraController : MonoBehaviour
     private Vector3 handCenter;
     private Vector3? mousePos;
     private float distance;
+    FileExplorer fileExplorer;
 
     // Start is called before the first frame update
     void Start()
     {
+        cameraTransform = gameObject.GetComponent<Transform>();
+        parentTransform = cameraTransform.parent;
+        var handTransform = handObj.transform.GetChild(0);
+        var mesh = handTransform.GetComponent<MeshFilter>().mesh;
+        handCenter = GetCenter(mesh);
+        parentTransform.position = handCenter;
+        cameraTransform.LookAt(handCenter);
+        distance = Vector3.Distance(transform.position, handCenter);
+    }
+
+    // Putting all start up code in new function
+    public void StartUp()
+    {
+        fileExplorer = GameObject.Find("FileManager").GetComponent<FileExplorer>();
+
+        handObj = fileExplorer.model;
+
         cameraTransform = gameObject.GetComponent<Transform>();
         parentTransform = cameraTransform.parent;
         var handTransform = handObj.transform.GetChild(0);
