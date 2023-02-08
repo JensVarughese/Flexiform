@@ -9,10 +9,31 @@ public class CameraController : MonoBehaviour
     private Vector3 handCenter;
     private Vector3? mousePos;
     private float distance;
+    FileExplorer fileExplorer;
 
     // Start is called before the first frame update
     void Start()
     {
+        cameraTransform = gameObject.GetComponent<Transform>();
+        parentTransform = cameraTransform.parent;
+        //var handTransform = handObj.transform.GetChild(0);
+        //var mesh = handTransform.GetComponent<MeshFilter>().mesh;
+        //handCenter = GetCenter(mesh);
+        //parentTransform.position = handCenter;
+        //cameraTransform.LookAt(handCenter);
+        //distance = Vector3.Distance(transform.position, handCenter);
+        parentTransform.position = new Vector3(0,0,0);
+        cameraTransform.LookAt(new Vector3(0, 0, 0));
+        distance = Vector3.Distance(transform.position, new Vector3(0, 0, 0));
+    }
+
+    // Putting all start up code in new function
+    public void StartUp()
+    {
+        fileExplorer = GameObject.Find("FileManager").GetComponent<FileExplorer>();
+
+        handObj = fileExplorer.model;
+
         cameraTransform = gameObject.GetComponent<Transform>();
         parentTransform = cameraTransform.parent;
         var handTransform = handObj.transform.GetChild(0);
@@ -91,7 +112,14 @@ public class CameraController : MonoBehaviour
         }
 
         //once at the new position, look at center
-        cameraTransform.LookAt(handCenter);
+        if (handCenter == null)
+        {
+            cameraTransform.LookAt(new Vector3(0, 0, 0));
+        }
+        else
+        {
+            cameraTransform.LookAt(handCenter);
+        }
 
         //set mouse position
         mousePos = newMousePos;
@@ -109,7 +137,14 @@ public class CameraController : MonoBehaviour
             return;
 
         transform.Translate(Vector3.forward * scrollAmount * distance / 20);
-        distance = Vector3.Distance(transform.position, handCenter);
+        if (handCenter == null)
+        {
+            distance = Vector3.Distance(transform.position, new Vector3(0,0,0));
+        }
+        else
+        {
+            distance = Vector3.Distance(transform.position, handCenter);
+        }
     }
 
     private bool isBet(float num, int p1, int p2)
