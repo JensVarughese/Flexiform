@@ -18,20 +18,19 @@ public class CameraController : MonoBehaviour
         parentTransform = cameraTransform.parent;
         //var handTransform = handObj.transform.GetChild(0);
         //var mesh = handTransform.GetComponent<MeshFilter>().mesh;
-        //handCenter = GetCenter(mesh);
+        handCenter = new Vector3(0,0,0);
         //parentTransform.position = handCenter;
         //cameraTransform.LookAt(handCenter);
         //distance = Vector3.Distance(transform.position, handCenter);
         parentTransform.position = new Vector3(0,0,0);
         cameraTransform.LookAt(new Vector3(0, 0, 0));
         distance = Vector3.Distance(transform.position, new Vector3(0, 0, 0));
+        fileExplorer = GameObject.Find("FileManager").GetComponent<FileExplorer>();
     }
 
     // Putting all start up code in new function
     public void StartUp()
     {
-        fileExplorer = GameObject.Find("FileManager").GetComponent<FileExplorer>();
-
         handObj = fileExplorer.model;
 
         cameraTransform = gameObject.GetComponent<Transform>();
@@ -45,7 +44,7 @@ public class CameraController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void LateUpdate()
+    void Update()
     {
         //Fire2 = Right Click
         if (Input.GetButton("Fire2"))
@@ -56,18 +55,6 @@ public class CameraController : MonoBehaviour
         {
             mousePos = null;
         }
-
-        /*
-
-            Camera is moving to new position, then rotating to point at center.
-            Rotating too fast before the calculation/updating causes the zoom-out effect.
-
-            IDEAS:
-
-            - 
-
-            - 
-        */
 
         //allows zooming
         ZoomCamera(Input.mouseScrollDelta.y);
@@ -111,15 +98,7 @@ public class CameraController : MonoBehaviour
             parentTransform.Rotate(-diffY / 2.0f, -diffX / 2.0f, 0.0f, Space.Self);
         }
 
-        //once at the new position, look at center
-        if (handCenter == null)
-        {
-            cameraTransform.LookAt(new Vector3(0, 0, 0));
-        }
-        else
-        {
-            cameraTransform.LookAt(handCenter);
-        }
+        cameraTransform.LookAt(handCenter);
 
         //set mouse position
         mousePos = newMousePos;
