@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Capstone Concept/Assets/Scripts/MeshEditor/Mesh Slice/CameraOrbit.cs.meta
 guid: c03df4b103a69a749971f68ab0f94560
+========
+guid: 71c09849449d61e47a4599e06b964998
+>>>>>>>> main:Capstone Concept/Assets/StandaloneFileBrowser/Sample/CanvasSampleOpenFileTextMultiple.cs.meta
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
