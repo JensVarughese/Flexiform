@@ -7,12 +7,13 @@ using TMPro;
 
 public class MeshCasing : MonoBehaviour
 {
-    public GameObject handObj;
+    private GameObject handObj;
     public Material casingMaterial;
     public GameObject CasingPanel;
     private bool isCasingGenerated = false;
     private float thicknessInMillimeters = 1;
     FileExplorer fileExplorer;
+    MouseSlice slice;
 
     /// <summary>
     /// 
@@ -29,6 +30,7 @@ public class MeshCasing : MonoBehaviour
         handObj = fileExplorer.model;
 
         var casing = Instantiate(handObj, new Vector3(0, 0, 0), Quaternion.identity);
+        casing.transform.GetChild(0).tag = "Sliceable";
 
         var mesh = casing.transform.GetChild(0).GetComponent<MeshFilter>().mesh;
         var normals = mesh.normals;
@@ -65,6 +67,9 @@ public class MeshCasing : MonoBehaviour
 
         casing.name = "Hand Casing";
         casing.transform.GetChild(0).GetComponent<MeshRenderer>().material = casingMaterial;
+
+        slice = GameObject.Find("SliceManager").GetComponent<MouseSlice>();
+        slice.ObjectContainer = casing.transform;
 
         isCasingGenerated = true;
         CasingPanel.SetActive(false);
