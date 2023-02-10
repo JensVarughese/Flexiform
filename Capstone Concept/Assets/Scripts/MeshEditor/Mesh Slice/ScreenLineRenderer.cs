@@ -14,7 +14,7 @@ public class ScreenLineRenderer : MonoBehaviour {
     Camera cam;
 
     public Material lineMaterial;
-    public bool canSlice = false;
+    bool canSlice = false;
 
     public void EnableSlicing() {
         canSlice = true;
@@ -76,15 +76,23 @@ public class ScreenLineRenderer : MonoBehaviour {
     /// </summary>
     private void PostRenderDrawLine(Camera cam)
     {
+        var thickness = 0.006f;
         if (dragging && lineMaterial)
         {
             GL.PushMatrix();
             lineMaterial.SetPass(0);
             GL.LoadOrtho();
-            GL.Begin(GL.LINES);
+            GL.Begin(GL.QUADS);
             GL.Color(Color.black);
-            GL.Vertex(start);
-            GL.Vertex(end);
+            GL.Vertex(new Vector3(start.x, start.y - thickness / 2.0f, start.z));
+            GL.Vertex(new Vector3(start.x, start.y + thickness / 2.0f, start.z));
+            GL.Vertex(new Vector3(end.x, end.y + thickness / 2.0f, end.z));
+            GL.Vertex(new Vector3(end.x, end.y - thickness / 2.0f, end.z));
+
+            GL.Vertex(new Vector3(start.x - thickness / 2.0f, start.y, start.z));
+            GL.Vertex(new Vector3(start.x + thickness / 2.0f, start.y, start.z));
+            GL.Vertex(new Vector3(end.x + thickness / 2.0f, end.y, end.z ));
+            GL.Vertex(new Vector3(end.x - thickness / 2.0f, end.y, end.z ));
             GL.End();
             GL.PopMatrix();
         }

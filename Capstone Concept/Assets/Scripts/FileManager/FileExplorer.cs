@@ -15,13 +15,12 @@ public class FileExplorer: MonoBehaviour
 {
     private RawImage rawImage;
     private Transform handModel;
+
     [System.NonSerialized]
     public GameObject model;
     public Material defaultMaterial;
     CameraController cameraController;
-    //public GameObject text;
-
-    
+    bool handLoaded = false;
 
 #if UNITY_WEBGL && !UNITY_EDITOR
     // WebGL
@@ -30,6 +29,9 @@ public class FileExplorer: MonoBehaviour
 
     public void OpenFileBrowser()
     {
+        if(handLoaded)
+            return;
+        
         UploadFile(gameObject.name, "OnFileUpload", ".obj", false);
     }
 
@@ -41,11 +43,12 @@ public class FileExplorer: MonoBehaviour
 #else
     public void OpenFileBrowser()
     {
+        if(handLoaded)
+            return;
+
         string[] paths = StandaloneFileBrowser.OpenFilePanel("Open File", "", "obj", false);
         if (paths.Length > 0)
-        {
             StartCoroutine(LoadFile(new System.Uri(paths[0]).AbsoluteUri));
-        }
     }
 #endif
 
@@ -62,10 +65,10 @@ public class FileExplorer: MonoBehaviour
             //textMeshPro.text = www.downloadHandler.text;
             MemoryStream textStream = new MemoryStream(Encoding.UTF8.GetBytes(www.downloadHandler.text));
             if (model != null)
-            {
                 Destroy(model);
-            }
+
             model = new OBJLoader().Load(textStream);
+            handLoaded = true;
             model.name = "hand";
             model.transform.position = Vector3.zero;
             model.transform.localScale = new Vector3(1, 1, 1);
