@@ -19,10 +19,12 @@ public class UIController : MonoBehaviour
         Button loadHandButton = root.Q<Button>("load-hand");
         Button generateButton = root.Q<Button>("generate-casing");
         Button cutButton = root.Q<Button>("cut");
+        Button exportHandButton = root.Q<Button>("export-hand");
 
         loadHandButton.clicked += () => loadHandButtonPressed();
         generateButton.clicked += () => generateButtonPressed();
         cutButton.clicked += () => cutButtonPressed();
+        exportHandButton.clicked += () => exportHandButtonPressed();
         
     }
 
@@ -45,6 +47,12 @@ public class UIController : MonoBehaviour
         // do mesh cutting code
         Debug.Log("Cutting..");
         slr.EnableSlicing();
+    }
+
+    void exportHandButtonPressed()
+    {
+        // do exporting code
+        Debug.Log("Exporting Hand..");
     }
 
 }

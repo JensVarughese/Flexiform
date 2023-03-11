@@ -5,6 +5,7 @@
             <ui:Button text="Load Hand" display-tooltip-when-elided="true" name="load-hand" class="button" />
             <ui:Button text="Generate Casing" display-tooltip-when-elided="true" name="generate-casing" class="button" />
             <ui:Button text="Cut" display-tooltip-when-elided="true" name="cut" class="button" />
+            <ui:Button text="Export Hand" display-tooltip-when-elided="true" name="export-hand" class="button" />
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>
