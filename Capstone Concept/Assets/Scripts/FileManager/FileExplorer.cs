@@ -75,6 +75,10 @@ public class FileExplorer: MonoBehaviour
             
             handModel = model.transform.GetChild(0);
             handModel.GetComponent<MeshRenderer>().material = defaultMaterial;
+
+            //Hashir code
+            //model.transform.GetChild(0).tag = "SliceableInner";
+            //
             cameraController = GameObject.Find("Main Camera").GetComponent<CameraController>();
             cameraController.StartUp();
         }
