@@ -1,6 +1,6 @@
 ﻿
 #if UNITY_STANDALONE_WIN
-using AnotherFileBrowser.Windows;
+// using AnotherFileBrowser.Windows;
 #endif
 using System.Collections;
 using System.Collections.Generic;
@@ -15,15 +15,15 @@ public class FileBrowserUpdate : MonoBehaviour
     public void OpenFileBrowser()
     {
 #if UNITY_STANDALONE_WIN
-        var bp = new BrowserProperties();
-        bp.filter = "Image files (*.jpg, *.jpeg, *.jpe, *.jfif, *.png) | *.jpg; *.jpeg; *.jpe; *.jfif; *.png";
-        bp.filterIndex = 0;
+        // var bp = new BrowserProperties();
+        // bp.filter = "Image files (*.jpg, *.jpeg, *.jpe, *.jfif, *.png) | *.jpg; *.jpeg; *.jpe; *.jfif; *.png";
+        // bp.filterIndex = 0;
 
-        new FileBrowser().OpenFileBrowser(bp, path =>
-        {
-            //Load image from local path with UWR
-            StartCoroutine(LoadImage(path));
-        });
+        // new FileBrowser().OpenFileBrowser(bp, path =>
+        // {
+        //     //Load image from local path with UWR
+        //     StartCoroutine(LoadImage(path));
+        // });
 #endif
     }
 

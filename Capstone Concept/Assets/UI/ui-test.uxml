@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/stylesheet.uss?fileID=7433441132597879392&amp;guid=c30018bffaec7f64a8ebec03664b0516&amp;type=3#stylesheet" />
+    <ui:VisualElement name="Background" style="background-color: rgba(95, 95, 95, 0); flex-grow: 1; align-items: flex-end; justify-content: space-between;">
+        <ui:VisualElement name="Buttons" style="flex-direction: row; justify-content: flex-end; border-top-left-radius: 10px; border-bottom-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); background-color: rgba(255, 255, 255, 0); align-items: stretch; top: 10px;">
+            <ui:Button text="Load Hand" display-tooltip-when-elided="true" name="load-hand" class="button" />
+            <ui:Button text="Generate Casing" display-tooltip-when-elided="true" name="generate-casing" class="button" />
+            <ui:Button text="Cut" display-tooltip-when-elided="true" name="cut" class="button" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
