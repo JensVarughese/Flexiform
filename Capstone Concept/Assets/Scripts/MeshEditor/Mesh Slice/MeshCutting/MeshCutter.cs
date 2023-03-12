@@ -22,7 +22,7 @@ public class MeshCutter
 
     private Intersections intersect;
 
-    private readonly float threshold = 1e-6f;
+    //private readonly float threshold = 1e-6f;
 
     public MeshCutter(int initialArraySize)
     {
@@ -292,7 +292,7 @@ public class MeshCutter
     private List<Vector3> FindRealPolygon(List<Vector3> pairsInner, List<Vector3> pairsOuter, List<int> list)
     {
         List<Vector3> vertices = new List<Vector3>();
-        Vector3 edge1, edge2;
+        //Vector3 edge1, edge2;
 
         int n;
         bool innerSmaller = false;
@@ -326,7 +326,7 @@ public class MeshCutter
 
             if (i + 1 < n)
             {
-                Debug.Log(innerSmaller);
+                //Debug.Log(innerSmaller);
                 if (innerSmaller == true)
                 {
                     //Debug.Log(i + " " + list[i]);
