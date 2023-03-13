@@ -36,7 +36,7 @@ public class FileExporter : MonoBehaviour
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < intArr.Length; i+=3)
         {
-            sb.Append(splitStr).Append((intArr[i] + 1) + "// " + (intArr[i + 1] + 1) + "// " + (intArr[i + 2] + 1) + "// \n");//.Append("// ").Append(intArr[i+1]+1).Append("// ").Append(intArr[i+2]+1).Append("//").Append("\n");
+            sb.Append(splitStr).Append((intArr[i] + 1) + " " + (intArr[i + 1] + 1) + " " + (intArr[i + 2] + 1) + "\n");//.Append("// ").Append(intArr[i+1]+1).Append("// ").Append(intArr[i+2]+1).Append("//").Append("\n");
         }
         if(sb.Length > 0)
         {
@@ -124,8 +124,8 @@ public class FileExporter : MonoBehaviour
     public string MeshToStr(Mesh mesh, Color meshColour, string splitStr)
     {
         StringBuilder sb = new StringBuilder();
-        sb.Append(V3ArrToStr(mesh.vertices, "v ")).Append(splitStr).Append(V3ArrToStr(mesh.normals, "vn "));//.Append(splitStr);//.Append(intArrToStr(mesh.triangles)).Append(splitStr)
-        sb.Append("s 1").Append(splitStr);
+        sb.Append(V3ArrToStr(mesh.vertices, "v ")).Append(splitStr);//.Append(splitStr);//.Append(intArrToStr(mesh.triangles)).Append(splitStr)
+        //sb.Append("s 1").Append(splitStr);
         Debug.Log(mesh.GetTopology(0));
 
 
