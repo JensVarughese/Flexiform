@@ -10,7 +10,9 @@ public class MeshCasing : MonoBehaviour
     private GameObject handObj;
     public Material casingMaterial;
     public GameObject CasingPanel;
-    private bool isCasingGenerated = false;
+    public GameObject CasingOuter;
+    public GameObject CasingInner;
+    public bool isCasingGenerated = false;
     private float thicknessInMillimeters = 1;
     FileExplorer fileExplorer;
     MouseSlice slice;
@@ -86,6 +88,9 @@ public class MeshCasing : MonoBehaviour
         casingOuter.name = "Hand Casing Outer";
         casingOuter.transform.GetChild(0).GetComponent<MeshRenderer>().material = casingMaterial;
 
+        CasingOuter = casingOuter;
+        CasingInner = casingInner;
+        
         slice = GameObject.Find("SliceManager").GetComponent<MouseSlice>();
         slice.ObjectContainerInner = casingInner.transform;
         slice.ObjectContainerOuter = casingOuter.transform;
