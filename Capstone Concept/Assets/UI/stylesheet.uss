@@ -1,7 +1,7 @@
 .button {
     width: 120px;
     height: 50px;
-    background-color: rgba(83, 166, 190, 255);
+    background-color: rgb(83, 166, 190);
     color: rgb(255, 255, 255);
     -unity-font-style: bold;
     font-size: 16px;
@@ -41,7 +41,7 @@
 .button:active {
     width: 120px;
     height: 50px;
-    background-color: rgb(41, 55, 212);
+    background-color: rgb(22, 254, 218);
     color: rgb(255, 255, 255);
     -unity-font-style: bold;
     font-size: 16px;
