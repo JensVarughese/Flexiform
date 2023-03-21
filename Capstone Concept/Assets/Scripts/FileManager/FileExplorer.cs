@@ -20,7 +20,7 @@ public class FileExplorer: MonoBehaviour
     public GameObject model;
     public Material defaultMaterial;
     CameraController cameraController;
-    bool handLoaded = false;
+    public bool handLoaded = false;
 
 #if UNITY_WEBGL && !UNITY_EDITOR
     // WebGL

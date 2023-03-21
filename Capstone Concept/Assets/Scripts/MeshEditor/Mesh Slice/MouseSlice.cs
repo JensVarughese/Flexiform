@@ -97,7 +97,7 @@ public class MouseSlice : MonoBehaviour {
         if (toSlice.Length > 1)
         {
             obj = toSlice[0];
-            if (obj.tag == "SliceableOuter")
+            if (obj.tag == "SliceableInner")
             {
                 // We multiply by the inverse transpose of the worldToLocal Matrix, a.k.a the transpose of the localToWorld Matrix
                 // Since this is how normal are transformed
