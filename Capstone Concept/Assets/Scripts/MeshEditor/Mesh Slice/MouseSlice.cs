@@ -19,6 +19,8 @@ public class MouseSlice : MonoBehaviour {
 
     private MeshCutter meshCutter;
     private TempMesh biggerMesh, smallerMesh;
+    MeshCasing meshCasing;
+    MeshCasing.MeshCasings casing = new MeshCasing.MeshCasings();
 
     #region Utility Functions
 
@@ -37,7 +39,8 @@ public class MouseSlice : MonoBehaviour {
     void Start () {
         // Initialize a somewhat big array so that it doesn't resize
         meshCutter = new MeshCutter(256);
-	}
+        meshCasing = GameObject.Find("MeshEditor").GetComponent<MeshCasing>();
+    }
 
     private void OnEnable()
     {
@@ -190,6 +193,47 @@ public class MouseSlice : MonoBehaviour {
 
         // Put the bigger mesh in the original object
         // TODO: Enable collider generation (either the exact mesh or compute smallest enclosing sphere)
+        if (tag == "SliceableInner")
+        {
+            //ReplaceMesh(casing.Inner,biggerMesh);
+            if (casing.Inner == null) {
+                casing.Inner = new Mesh();
+            }
+            casing.Inner.Clear();
+            casing.Inner.SetVertices(biggerMesh.vertices);
+            casing.Inner.SetTriangles(biggerMesh.triangles, 0);
+            casing.Inner.SetNormals(biggerMesh.normals);
+            casing.Inner.SetUVs(0, biggerMesh.uvs);
+
+            //mesh.RecalculateNormals();
+            casing.Inner.RecalculateTangents();
+
+        }
+        else
+        {
+            //ReplaceMesh(casing.Outer, biggerMesh);
+            if (casing.Outer == null)
+            {
+                casing.Outer = new Mesh();
+            }
+            casing.Outer.Clear();
+            casing.Outer.SetVertices(biggerMesh.vertices);
+            casing.Outer.SetTriangles(biggerMesh.triangles, 0);
+            casing.Outer.SetNormals(biggerMesh.normals);
+            casing.Outer.SetUVs(0, biggerMesh.uvs);
+
+            //mesh.RecalculateNormals();
+            casing.Outer.RecalculateTangents();
+
+        }
+
+        if (casing.Inner!=null && casing.Outer!=null)
+        {
+            meshCasing.undoList.Push(casing);
+            casing.Inner = null;
+            casing.Outer = null;
+        }
+        
         ReplaceMesh(mesh, biggerMesh);
         //ReplaceMesh(newObjMesh, smallerMesh);
 

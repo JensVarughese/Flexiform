@@ -18,7 +18,38 @@ public class MeshCasing : MonoBehaviour
     private float thicknessInMillimeters = 1;
     FileExplorer fileExplorer;
     MouseSlice slice;
+    public Stack<MeshCasings> undoList = new Stack<MeshCasings>();
 
+    public void Update()
+    {
+        if (Input.GetKeyUp(KeyCode.Z))
+        {
+            Debug.Log("Key Z hit");
+            Debug.Log(undoList.Count);
+            if (undoList.Count>=2)
+            {
+                Debug.Log("More than two undos");
+                undoList.Pop();
+                var temp = undoList.Peek();
+                CasingInner.transform.GetChild(0).GetComponent<MeshFilter>().mesh = temp.Inner;
+                CasingOuter.transform.GetChild(0).GetComponent<MeshFilter>().mesh = temp.Outer;
+                //undoList.Pop();
+            }else if (undoList.Count == 1)
+            {
+                Debug.Log("Only one undo");
+                var temp = undoList.Peek();
+                CasingInner.transform.GetChild(0).GetComponent<MeshFilter>().mesh = temp.Inner;
+                CasingOuter.transform.GetChild(0).GetComponent<MeshFilter>().mesh = temp.Outer;
+            }
+            
+        }
+    }
+
+    public struct MeshCasings
+    {
+        public Mesh Inner;
+        public Mesh Outer;
+    }
     /// <summary>
     /// 
     /// </summary>
@@ -103,6 +134,27 @@ public class MeshCasing : MonoBehaviour
         slice = GameObject.Find("SliceManager").GetComponent<MouseSlice>();
         slice.ObjectContainerInner = CasingInner.transform;
         slice.ObjectContainerOuter = CasingOuter.transform;
+
+        MeshCasings casing = new MeshCasings();
+
+        casing.Inner = new Mesh();
+        casing.Inner.vertices = meshInner.vertices;
+        casing.Inner.triangles = meshInner.triangles;
+        casing.Inner.uv = meshInner.uv;
+        casing.Inner.normals = meshInner.normals;
+        casing.Inner.colors = meshInner.colors;
+        casing.Inner.tangents = meshInner.tangents;
+
+
+        casing.Outer = new Mesh();
+        casing.Outer.vertices = meshOuter.vertices;
+        casing.Outer.triangles = meshOuter.triangles;
+        casing.Outer.uv = meshOuter.uv;
+        casing.Outer.normals = meshOuter.normals;
+        casing.Outer.colors = meshOuter.colors;
+        casing.Outer.tangents = meshOuter.tangents;
+
+        undoList.Push(casing);
 
         isCasingGenerated = true;
         CasingPanel.SetActive(false);
