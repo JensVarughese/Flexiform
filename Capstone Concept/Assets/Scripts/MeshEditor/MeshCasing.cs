@@ -10,7 +10,11 @@ public class MeshCasing : MonoBehaviour
     private GameObject handObj;
     public Material casingMaterial;
     public GameObject CasingPanel;
-    private bool isCasingGenerated = false;
+    public GameObject CasingOuter;
+    public GameObject CasingInner;
+    private GameObject CasingOuterOriginal;
+    private GameObject CasingInnerOriginal;
+    public bool isCasingGenerated = false;
     private float thicknessInMillimeters = 1;
     FileExplorer fileExplorer;
     MouseSlice slice;
@@ -20,22 +24,34 @@ public class MeshCasing : MonoBehaviour
     /// </summary>
     public void generateCasing()
     {
-        if (isCasingGenerated)
-        {
-            return;
-        }
+        //if (isCasingGenerated)
+        //{
+        //    return;
+        //}
 
         fileExplorer = GameObject.Find("FileManager").GetComponent<FileExplorer>();
 
         handObj = fileExplorer.model;
+        if (isCasingGenerated == true)
+        {
+            Destroy(CasingInner);
+            Destroy(CasingOuter);
+        }
+        CasingInner = Instantiate(handObj, new Vector3(0, 0, 0), Quaternion.identity);
+        CasingOuter = Instantiate(handObj, new Vector3(0, 0, 0), Quaternion.identity);
 
-        var casing = Instantiate(handObj, new Vector3(0, 0, 0), Quaternion.identity);
-        casing.transform.GetChild(0).tag = "Sliceable";
+        // hashir code edited
+        CasingInner.transform.GetChild(0).tag = "SliceableInner";
+        CasingOuter.transform.GetChild(0).tag = "SliceableOuter";
+        //
+        
 
-        var mesh = casing.transform.GetChild(0).GetComponent<MeshFilter>().mesh;
-        var normals = mesh.normals;
-        var innerVerts = mesh.vertices;
-        var innerTriangles = mesh.triangles;
+
+        var meshInner = CasingInner.transform.GetChild(0).GetComponent<MeshFilter>().mesh;
+        var meshOuter = CasingOuter.transform.GetChild(0).GetComponent<MeshFilter>().mesh;
+        var normals = meshInner.normals;
+        var innerVerts = meshInner.vertices;
+        var innerTriangles = meshInner.triangles;
 
         // create outer mesh
         var outerVerts = new Vector3[innerVerts.Length];
@@ -48,8 +64,9 @@ public class MeshCasing : MonoBehaviour
         }
         for (var i = 0; i < outerTraingles.Length; i++)
         {
-            outerTraingles[i] = innerTriangles[i] + innerVerts.Length;
+            outerTraingles[i] = innerTriangles[i];// + innerVerts.Length;
         }
+
 
         // flip inner mesh
         for (var i = 0; i < innerTriangles.Length; i += 3)
@@ -59,20 +76,42 @@ public class MeshCasing : MonoBehaviour
             innerTriangles[i + 2] = temp;
         }
 
-        mesh.vertices = innerVerts.Concat(outerVerts).ToArray();
-        mesh.triangles = innerTriangles.Concat(outerTraingles).ToArray();
-        mesh.RecalculateTangents();
-        mesh.RecalculateBounds();
-        mesh.RecalculateNormals();
 
-        casing.name = "Hand Casing";
-        casing.transform.GetChild(0).GetComponent<MeshRenderer>().material = casingMaterial;
+        meshInner.vertices = innerVerts.ToArray();//.Concat(outerVerts).ToArray();
+        meshInner.triangles = innerTriangles.ToArray();//.Concat(outerTraingles).ToArray();
 
+        //mesh.vertices = innerVerts.Concat(outerVerts).ToArray();
+        //mesh.triangles = innerTriangles.Concat(outerTraingles).ToArray();
+        meshInner.RecalculateTangents();
+        meshInner.RecalculateBounds();
+        meshInner.RecalculateNormals();
+
+        CasingInner.name = "Hand Casing Inner";
+        CasingInner.transform.GetChild(0).GetComponent<MeshRenderer>().material = casingMaterial;
+
+        meshOuter.triangles = outerTraingles.ToArray();
+        meshOuter.vertices = outerVerts.ToArray();
+        //meshOuter.triangles = outerTraingles.ToArray();
+
+        meshOuter.RecalculateTangents();
+        meshOuter.RecalculateBounds();
+        meshOuter.RecalculateNormals();
+
+        CasingOuter.name = "Hand Casing Outer";
+        CasingOuter.transform.GetChild(0).GetComponent<MeshRenderer>().material = casingMaterial;
+        
         slice = GameObject.Find("SliceManager").GetComponent<MouseSlice>();
-        slice.ObjectContainer = casing.transform;
+        slice.ObjectContainerInner = CasingInner.transform;
+        slice.ObjectContainerOuter = CasingOuter.transform;
 
         isCasingGenerated = true;
         CasingPanel.SetActive(false);
+    }
+
+    public void resetCase()
+    {
+        if (isCasingGenerated == false) { return; }
+        generateCasing();
     }
 
     public void setThickness(Slider slider)
@@ -87,7 +126,7 @@ public class MeshCasing : MonoBehaviour
 
     public void openCasingPanel()
     {
-        if (isCasingGenerated) { return; }
+        //if (isCasingGenerated) { return; }
 
         CasingPanel.SetActive(true);
     }

@@ -4,7 +4,8 @@ using UnityEngine;
 public class MouseSlice : MonoBehaviour {
 
     public GameObject plane;
-    public Transform ObjectContainer;
+    public Transform ObjectContainerInner;
+    public Transform ObjectContainerOuter;
 
     // How far away from the slice do we separate resulting objects
     public float separation;
@@ -66,39 +67,97 @@ public class MouseSlice : MonoBehaviour {
 
     void SliceObjects(Vector3 point, Vector3 normal)
     {
-        var toSlice = GameObject.FindGameObjectsWithTag("Sliceable");
-
+        // hashirs code edited
+        var slicable = new List<GameObject>();
+        slicable.AddRange(GameObject.FindGameObjectsWithTag("SliceableInner"));
+        slicable.AddRange(GameObject.FindGameObjectsWithTag("SliceableOuter"));
+        var toSlice = slicable.ToArray();
+        //
         // Put results in positive and negative array so that we separate all meshes if there was a cut made
         List<Transform> positive = new List<Transform>(),
             negative = new List<Transform>();
 
         GameObject obj;
         bool slicedAny = false;
-        for (int i = 0; i < toSlice.Length; ++i)
+        //for (int i = 0; i < toSlice.Length; ++i)
+        //{
+        //    obj = toSlice[i];
+        //    // We multiply by the inverse transpose of the worldToLocal Matrix, a.k.a the transpose of the localToWorld Matrix
+        //    // Since this is how normal are transformed
+        //    var transformedNormal = ((Vector3)(obj.transform.localToWorldMatrix.transpose * normal)).normalized;
+
+        //    //Convert plane in object's local frame
+        //    slicePlane.SetNormalAndPosition(
+        //        transformedNormal,
+        //        obj.transform.InverseTransformPoint(point));
+
+        //    slicedAny = SliceObject(ref slicePlane, obj, positive, negative, obj.tag) || slicedAny;
+        //}
+
+        if (toSlice.Length > 1)
         {
-            obj = toSlice[i];
-            // We multiply by the inverse transpose of the worldToLocal Matrix, a.k.a the transpose of the localToWorld Matrix
-            // Since this is how normal are transformed
-            var transformedNormal = ((Vector3)(obj.transform.localToWorldMatrix.transpose * normal)).normalized;
+            obj = toSlice[0];
+            if (obj.tag == "SliceableInner")
+            {
+                // We multiply by the inverse transpose of the worldToLocal Matrix, a.k.a the transpose of the localToWorld Matrix
+                // Since this is how normal are transformed
+                var transformedNormal = ((Vector3)(obj.transform.localToWorldMatrix.transpose * normal)).normalized;
 
-            //Convert plane in object's local frame
-            slicePlane.SetNormalAndPosition(
-                transformedNormal,
-                obj.transform.InverseTransformPoint(point));
+                //Convert plane in object's local frame
+                slicePlane.SetNormalAndPosition(
+                    transformedNormal,
+                    obj.transform.InverseTransformPoint(point));
 
-            slicedAny = SliceObject(ref slicePlane, obj, positive, negative) || slicedAny;
+                slicedAny = SliceObject(ref slicePlane, obj, positive, negative, obj.tag) || slicedAny;
+
+                obj = toSlice[1];
+
+                transformedNormal = ((Vector3)(obj.transform.localToWorldMatrix.transpose * normal)).normalized;
+
+                //Convert plane in object's local frame
+                slicePlane.SetNormalAndPosition(
+                    transformedNormal,
+                    obj.transform.InverseTransformPoint(point));
+
+                slicedAny = SliceObject(ref slicePlane, obj, positive, negative, obj.tag) || slicedAny;
+            }
+            else
+            {
+                obj = toSlice[1];
+
+                var transformedNormal = ((Vector3)(obj.transform.localToWorldMatrix.transpose * normal)).normalized;
+
+                //Convert plane in object's local frame
+                slicePlane.SetNormalAndPosition(
+                    transformedNormal,
+                    obj.transform.InverseTransformPoint(point));
+
+                slicedAny = SliceObject(ref slicePlane, obj, positive, negative, obj.tag) || slicedAny;
+
+                obj = toSlice[0];
+
+                transformedNormal = ((Vector3)(obj.transform.localToWorldMatrix.transpose * normal)).normalized;
+
+                //Convert plane in object's local frame
+                slicePlane.SetNormalAndPosition(
+                    transformedNormal,
+                    obj.transform.InverseTransformPoint(point));
+
+                slicedAny = SliceObject(ref slicePlane, obj, positive, negative, obj.tag) || slicedAny;
+            }
         }
 
+
         // Separate meshes if a slice was made
-        if (slicedAny)
-            SeparateMeshes(positive, negative, normal);
+        //if (slicedAny)
+        //    SeparateMeshes(positive, negative, normal);
     }
 
-    bool SliceObject(ref Plane slicePlane, GameObject obj, List<Transform> positiveObjects, List<Transform> negativeObjects)
+    bool SliceObject(ref Plane slicePlane, GameObject obj, List<Transform> positiveObjects, List<Transform> negativeObjects, string tag)
     {
         var mesh = obj.GetComponent<MeshFilter>().mesh;
 
-        if (!meshCutter.SliceMesh(mesh, ref slicePlane))
+        if (!meshCutter.SliceMesh(mesh, ref slicePlane, tag))
         {
             // Put object in the respective list
             if (slicePlane.GetDistanceToPoint(meshCutter.GetFirstVertex()) >= 0)

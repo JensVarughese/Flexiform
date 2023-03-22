@@ -144,6 +144,7 @@ public class Intersections
             intersectVectors[0] = newPointNext.Item1;
             intersectVectors[1] = newPointPrev.Item1;
         }
+       
         return true;
     }
 
