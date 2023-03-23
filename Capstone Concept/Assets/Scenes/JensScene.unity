@@ -379,6 +379,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultMaterial: {fileID: 2100000, guid: bd6c279d706b8e3428bb9f7d92fa2b20, type: 2}
+  handLoaded: 0
 --- !u!1 &527754091
 GameObject:
   m_ObjectHideFlags: 0
@@ -610,7 +611,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   plane: {fileID: 2133397678}
-  ObjectContainer: {fileID: 984808281}
+  ObjectContainerInner: {fileID: 0}
+  ObjectContainerOuter: {fileID: 0}
   separation: 0
   drawPlane: 0
   lineRenderer: {fileID: 668827837}
@@ -1971,6 +1973,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   casingMaterial: {fileID: 2100000, guid: 3c5cc73274db890459cafeb6387560e7, type: 2}
   CasingPanel: {fileID: 726887774}
+  CasingOuter: {fileID: 0}
+  CasingInner: {fileID: 0}
+  isCasingGenerated: 0
 --- !u!4 &1272389267
 Transform:
   m_ObjectHideFlags: 0

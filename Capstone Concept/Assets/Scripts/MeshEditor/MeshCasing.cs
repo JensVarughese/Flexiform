@@ -9,13 +9,12 @@ public class MeshCasing : MonoBehaviour
 {
     private GameObject handObj;
     public Material casingMaterial;
-    public GameObject CasingPanel;
     public GameObject CasingOuter;
     public GameObject CasingInner;
     private GameObject CasingOuterOriginal;
     private GameObject CasingInnerOriginal;
     public bool isCasingGenerated = false;
-    private float thicknessInMillimeters = 1;
+    public float thicknessInMillimeters = 3;
     FileExplorer fileExplorer;
     MouseSlice slice;
     public Stack<MeshCasings> undoList = new Stack<MeshCasings>();
@@ -157,35 +156,12 @@ public class MeshCasing : MonoBehaviour
         undoList.Push(casing);
 
         isCasingGenerated = true;
-        CasingPanel.SetActive(false);
     }
 
     public void resetCase()
     {
         if (isCasingGenerated == false) { return; }
         generateCasing();
-    }
-
-    public void setThickness(Slider slider)
-    {
-        thicknessInMillimeters = slider.value;
-    }
-    public void updateSliderValue(GameObject text)
-    {
-        var textValue = text.GetComponent<TextMeshProUGUI>();
-        textValue.text = Math.Round(thicknessInMillimeters, 2).ToString() + "mm";
-    }
-
-    public void openCasingPanel()
-    {
-        //if (isCasingGenerated) { return; }
-
-        CasingPanel.SetActive(true);
-    }
-
-    public void closeCasingPanel()
-    {
-        CasingPanel.SetActive(false);
     }
 
     /// <summary>
