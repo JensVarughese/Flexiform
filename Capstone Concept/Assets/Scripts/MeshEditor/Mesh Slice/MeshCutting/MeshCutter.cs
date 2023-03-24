@@ -9,9 +9,6 @@ public class MeshCutter
     public TempMesh PositiveMesh { get; private set; }
     public TempMesh NegativeMesh { get; private set; }
 
-    private List<Vector3> addedPairsInner;
-    private List<Vector3> addedPairsOuter;
-
     private readonly List<Vector3> ogVertices;
     private readonly List<int> ogTriangles;
     private readonly List<Vector3> ogNormals;
@@ -29,8 +26,6 @@ public class MeshCutter
         PositiveMesh = new TempMesh(initialArraySize);
         NegativeMesh = new TempMesh(initialArraySize);
 
-        addedPairsInner = new List<Vector3>(initialArraySize);
-        addedPairsOuter = new List<Vector3>(initialArraySize);
         ogVertices = new List<Vector3>(initialArraySize);
         ogNormals = new List<Vector3>(initialArraySize);
         ogUvs = new List<Vector2>(initialArraySize);
@@ -48,7 +43,7 @@ public class MeshCutter
     /// Returns posMesh and negMesh, which are the resuling meshes on both sides of the plane 
     /// (posMesh on the same side as the plane's normal, negMesh on the opposite side)
     /// </summary>
-    public bool SliceMesh(Mesh mesh, ref Plane slice, string tag)
+    public bool SliceMesh(Mesh mesh, ref Plane slice)
     {
 
         // Let's always fill the vertices array so that we can access it even if the mesh didn't intersect
@@ -82,25 +77,10 @@ public class MeshCutter
         // 3. Separate triangles and cut those that intersect the plane
         for (int i = 0; i < ogTriangles.Count; i += 3)
         {
-            if (intersect.TrianglePlaneIntersect(ogVertices, ogUvs, ogTriangles, i, ref slice, PositiveMesh, NegativeMesh, intersectPair))
-            {
-                //Debug.Log(tag + " " + intersectPair[0] + " " + intersectPair[1]);
-                if (tag == "SliceableOuter")
-                    addedPairsOuter.AddRange(intersectPair);
-                else
-                    addedPairsInner.AddRange(intersectPair);
-            }
+            intersect.TrianglePlaneIntersect(ogVertices, ogUvs, ogTriangles, i, ref slice, PositiveMesh, NegativeMesh, intersectPair);
         }
 
-        if (addedPairsOuter.Count > 0 || addedPairsInner.Count > 0)
-        {
-            //FillBoundaryGeneral(addedPairs);
-            FillBoundaryFace(addedPairsOuter, addedPairsInner);
-            return true;
-        } else
-        {
-            throw new UnityException("Error: if added pairs is empty, we should have returned false earlier");
-        }
+        return true;
     }
 
     public Vector3 GetFirstVertex()
@@ -214,10 +194,6 @@ public class MeshCutter
         {
             AddTriangle(face2, i, i + 1, i + 2);
         }
-
-        addedPairsInner.Clear();
-        addedPairsOuter.Clear();
-
     }
 
     private List<Vector3> findneighbor(List<Vector3> list)

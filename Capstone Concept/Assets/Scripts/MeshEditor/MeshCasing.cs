@@ -2,8 +2,6 @@ using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 using System;
-using UnityEngine.UI;
-using TMPro;
 
 public class MeshCasing : MonoBehaviour
 {
@@ -14,154 +12,125 @@ public class MeshCasing : MonoBehaviour
     private GameObject CasingOuterOriginal;
     private GameObject CasingInnerOriginal;
     public bool isCasingGenerated = false;
-    public float thicknessInMillimeters = 3;
+    public float thicknessInMillimeters = 1;
     FileExplorer fileExplorer;
     MouseSlice slice;
-    public Stack<MeshCasings> undoList = new Stack<MeshCasings>();
+    public Stack<Mesh> undoList = new Stack<Mesh>();
 
     public void Update()
     {
-        if (Input.GetKeyUp(KeyCode.Z))
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyUp(KeyCode.Z))
         {
-            Debug.Log("Key Z hit");
-            Debug.Log(undoList.Count);
             if (undoList.Count>=2)
             {
-                Debug.Log("More than two undos");
                 undoList.Pop();
                 var temp = undoList.Peek();
-                CasingInner.transform.GetChild(0).GetComponent<MeshFilter>().mesh = temp.Inner;
-                CasingOuter.transform.GetChild(0).GetComponent<MeshFilter>().mesh = temp.Outer;
-                //undoList.Pop();
+                CasingInner.transform.GetChild(0).GetComponent<MeshFilter>().mesh = temp;
+                generateCasing();
             }else if (undoList.Count == 1)
             {
-                Debug.Log("Only one undo");
                 var temp = undoList.Peek();
-                CasingInner.transform.GetChild(0).GetComponent<MeshFilter>().mesh = temp.Inner;
-                CasingOuter.transform.GetChild(0).GetComponent<MeshFilter>().mesh = temp.Outer;
+                CasingInner.transform.GetChild(0).GetComponent<MeshFilter>().mesh = temp;
+                generateCasing();
             }
             
         }
     }
 
-    public struct MeshCasings
-    {
-        public Mesh Inner;
-        public Mesh Outer;
-    }
     /// <summary>
     /// 
     /// </summary>
     public void generateCasing()
     {
-        //if (isCasingGenerated)
-        //{
-        //    return;
-        //}
-
         fileExplorer = GameObject.Find("FileManager").GetComponent<FileExplorer>();
 
         handObj = fileExplorer.model;
         if (isCasingGenerated == true)
         {
-            Destroy(CasingInner);
             Destroy(CasingOuter);
         }
-        CasingInner = Instantiate(handObj, new Vector3(0, 0, 0), Quaternion.identity);
+        else {
+            CasingInner = Instantiate(handObj, new Vector3(0, 0, 0), Quaternion.identity);
+        }
+        
         CasingOuter = Instantiate(handObj, new Vector3(0, 0, 0), Quaternion.identity);
 
         // hashir code edited
-        CasingInner.transform.GetChild(0).tag = "SliceableInner";
+        CasingInner.transform.GetChild(0).tag = "Sliceable";
         CasingOuter.transform.GetChild(0).tag = "SliceableOuter";
-        //
-        
-
 
         var meshInner = CasingInner.transform.GetChild(0).GetComponent<MeshFilter>().mesh;
         var meshOuter = CasingOuter.transform.GetChild(0).GetComponent<MeshFilter>().mesh;
-        var normals = meshInner.normals;
+        meshOuter.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32; // allows verticies limit to increase from 65535 to 4 billion
+
+        
         var innerVerts = meshInner.vertices;
         var innerTriangles = meshInner.triangles;
+        if(!isCasingGenerated) {
+            // flip inner mesh
+            for (var i = 0; i < innerTriangles.Length; i += 3)
+            {
+                var temp = innerTriangles[i + 1];
+                innerTriangles[i + 1] = innerTriangles[i + 2];
+                innerTriangles[i + 2] = temp;
+            }
 
+            meshInner.vertices = innerVerts.ToArray();
+            meshInner.triangles = innerTriangles.ToArray();
+            meshInner.RecalculateTangents();
+            meshInner.RecalculateBounds();
+            meshInner.RecalculateNormals();
+        }
+        var normals = meshInner.normals;
+        
         // create outer mesh
-        var outerVerts = new Vector3[innerVerts.Length];
-        var outerTraingles = new int[innerTriangles.Length];
+        var outerVerts = new List<Vector3>();
+        var outerTraingles = new List<int>();
         var normalsCollection = new Dictionary<Vector3, Vector3>();
-        for (var i = 0; i < outerVerts.Length; i++)
-        {
-            var n = GetNormal(ref normalsCollection, normals[i], innerVerts[i]);
-            outerVerts[i] = innerVerts[i] + (n * thicknessInMillimeters);
+        for(var i = 0; i < innerTriangles.Length; i +=3) {
+            var v1 = innerVerts[innerTriangles[i]];
+            var v2 = innerVerts[innerTriangles[i + 1]];
+            var v3 = innerVerts[innerTriangles[i + 2]];
+            var v4 = v1 + GetNormal(ref normalsCollection, normals[innerTriangles[i]], v1) * thicknessInMillimeters * -1;
+            var v5 = v2 + GetNormal(ref normalsCollection, normals[innerTriangles[i + 1]], v2) * thicknessInMillimeters  * -1;
+            var v6 = v3 + GetNormal(ref normalsCollection, normals[innerTriangles[i + 2]], v3) * thicknessInMillimeters  * -1;
+            AddTriangle(outerVerts, outerTraingles, v4, v6, v5);
+            AddTriangle(outerVerts, outerTraingles, v1, v3, v6);
+            AddTriangle(outerVerts, outerTraingles, v1, v6, v4);
+            AddTriangle(outerVerts, outerTraingles, v2, v1, v4);
+            AddTriangle(outerVerts, outerTraingles, v2, v4, v5);
+            AddTriangle(outerVerts, outerTraingles, v3, v2, v5);
+            AddTriangle(outerVerts, outerTraingles, v3, v5, v6);
         }
-        for (var i = 0; i < outerTraingles.Length; i++)
-        {
-            outerTraingles[i] = innerTriangles[i];// + innerVerts.Length;
-        }
-
-
-        // flip inner mesh
-        for (var i = 0; i < innerTriangles.Length; i += 3)
-        {
-            var temp = innerTriangles[i + 1];
-            innerTriangles[i + 1] = innerTriangles[i + 2];
-            innerTriangles[i + 2] = temp;
-        }
-
-
-        meshInner.vertices = innerVerts.ToArray();//.Concat(outerVerts).ToArray();
-        meshInner.triangles = innerTriangles.ToArray();//.Concat(outerTraingles).ToArray();
-
-        //mesh.vertices = innerVerts.Concat(outerVerts).ToArray();
-        //mesh.triangles = innerTriangles.Concat(outerTraingles).ToArray();
-        meshInner.RecalculateTangents();
-        meshInner.RecalculateBounds();
-        meshInner.RecalculateNormals();
-
-        CasingInner.name = "Hand Casing Inner";
-        CasingInner.transform.GetChild(0).GetComponent<MeshRenderer>().material = casingMaterial;
-
-        meshOuter.triangles = outerTraingles.ToArray();
         meshOuter.vertices = outerVerts.ToArray();
-        //meshOuter.triangles = outerTraingles.ToArray();
-
+        meshOuter.triangles = outerTraingles.ToArray();
+        meshOuter.RecalculateNormals();
         meshOuter.RecalculateTangents();
         meshOuter.RecalculateBounds();
-        meshOuter.RecalculateNormals();
+        
+        CasingInner.name = "Hand Casing Inner";
+        CasingInner.transform.GetChild(0).GetComponent<MeshRenderer>().material = casingMaterial;
 
         CasingOuter.name = "Hand Casing Outer";
         CasingOuter.transform.GetChild(0).GetComponent<MeshRenderer>().material = casingMaterial;
         
         slice = GameObject.Find("SliceManager").GetComponent<MouseSlice>();
-        slice.ObjectContainerInner = CasingInner.transform;
-        slice.ObjectContainerOuter = CasingOuter.transform;
+        slice.ObjectContainer = CasingInner.transform;
 
-        MeshCasings casing = new MeshCasings();
-
-        casing.Inner = new Mesh();
-        casing.Inner.vertices = meshInner.vertices;
-        casing.Inner.triangles = meshInner.triangles;
-        casing.Inner.uv = meshInner.uv;
-        casing.Inner.normals = meshInner.normals;
-        casing.Inner.colors = meshInner.colors;
-        casing.Inner.tangents = meshInner.tangents;
-
-
-        casing.Outer = new Mesh();
-        casing.Outer.vertices = meshOuter.vertices;
-        casing.Outer.triangles = meshOuter.triangles;
-        casing.Outer.uv = meshOuter.uv;
-        casing.Outer.normals = meshOuter.normals;
-        casing.Outer.colors = meshOuter.colors;
-        casing.Outer.tangents = meshOuter.tangents;
-
-        undoList.Push(casing);
+        // history logic
+        if(undoList.Count > 0 && undoList.Peek().vertexCount == meshInner.vertexCount)
+            return;
+        var saveInnner = new Mesh();
+        saveInnner.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        saveInnner.vertices = meshInner.vertices;
+        saveInnner.triangles = meshInner.triangles;
+        saveInnner.uv = meshInner.uv;
+        saveInnner.normals = meshInner.normals;
+        saveInnner.colors = meshInner.colors;
+        saveInnner.tangents = meshInner.tangents;
+        undoList.Push(saveInnner);
 
         isCasingGenerated = true;
-    }
-
-    public void resetCase()
-    {
-        if (isCasingGenerated == false) { return; }
-        generateCasing();
     }
 
     /// <summary>
@@ -185,5 +154,12 @@ public class MeshCasing : MonoBehaviour
         }
 
         return normalsCollection[roundedVert];
+    }
+
+    private void AddTriangle(List<Vector3> vertices, List<int> traingles, Vector3 v1, Vector3 v2, Vector3 v3)
+    {
+        vertices.AddRange(new Vector3[]{v1, v2, v3});
+        var size = vertices.Count;
+        traingles.AddRange(new int[]{size - 3, size - 2, size - 1});
     }
 }

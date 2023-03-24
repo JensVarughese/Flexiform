@@ -2,11 +2,13 @@
     background-color: rgb(8, 200, 255);
     border-radius: 3px;
     border-color: rgba(255, 255, 255, 0);
+    height: 70%;
 }
 
 .unity-base-slider__tracker {
     background-color: rgb(200, 200, 200);
     border-color: rgba(255, 255, 255, 0);
+    height: 30%;
 }
 
 .unity-base-slider__label {
@@ -14,12 +16,12 @@
 }
 
 .button {
-    width: 50px;
-    height: 100px;
+    width: 55%;
+    height: 100%;
     background-color: rgba(255, 255, 255, 0.71);
     color: rgb(8, 200, 255);
     -unity-font-style: bold;
-    font-size: 10px;
+    font-size: 95%;
     flex-wrap: nowrap;
     flex-direction: column;
     white-space: normal;
@@ -34,12 +36,16 @@
     transition-timing-function: ease;
     -unity-background-scale-mode: stretch-to-fill;
     background-image: none;
-    max-width: 60px;
-    max-height: 30px;
+    max-width: initial;
+    max-height: initial;
     border-left-color: rgb(8, 200, 255);
     border-right-color: rgb(8, 200, 255);
     border-top-color: rgb(8, 200, 255);
     border-bottom-color: rgb(8, 200, 255);
+    border-left-width: 2px;
+    border-right-width: 2px;
+    border-top-width: 2px;
+    border-bottom-width: 2px;
 }
 
 .button:hover {

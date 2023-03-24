@@ -44,7 +44,7 @@ public class UIController : MonoBehaviour
 
     void OnSliderChange(ChangeEvent<float> v)
     {
-        thicknessSlider.label = "Thickness: " + v.newValue + "mm";
+        thicknessSlider.label = "Thickness: " + v.newValue.ToString("n2") + "mm";
         meshCasing.thicknessInMillimeters = v.newValue;
     }
 
@@ -59,6 +59,7 @@ public class UIController : MonoBehaviour
         // do generate casing code
         //meshCasing.openCasingPanel();
         casingPanel.style.display = DisplayStyle.Flex;
+        thicknessSlider.label = "Thickness: " + meshCasing.thicknessInMillimeters.ToString("n2") + "mm";
     }
 
     void CancelCasing()
@@ -75,7 +76,6 @@ public class UIController : MonoBehaviour
     void cutButtonPressed()
     {
         // do mesh cutting code
-        Debug.Log("Cutting..");
         screenLineRenderer.EnableSlicing();
     }
 
@@ -83,7 +83,7 @@ public class UIController : MonoBehaviour
     {
         // do exporting code
         Debug.Log("Exporting Hand..");
-        fileExporter.onClickSave();
+        fileExporter.onClickSave(ExportType.Obj);
     }
 
 }
