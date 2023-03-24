@@ -4,8 +4,7 @@ using UnityEngine;
 public class MouseSlice : MonoBehaviour {
 
     public GameObject plane;
-    public Transform ObjectContainerInner;
-    public Transform ObjectContainerOuter;
+    public Transform ObjectContainer;
 
     // How far away from the slice do we separate resulting objects
     public float separation;
@@ -19,8 +18,6 @@ public class MouseSlice : MonoBehaviour {
 
     private MeshCutter meshCutter;
     private TempMesh biggerMesh, smallerMesh;
-    MeshCasing meshCasing;
-    MeshCasing.MeshCasings casing = new MeshCasing.MeshCasings();
 
     #region Utility Functions
 
@@ -39,7 +36,6 @@ public class MouseSlice : MonoBehaviour {
     void Start () {
         // Initialize a somewhat big array so that it doesn't resize
         meshCutter = new MeshCutter(256);
-        meshCasing = GameObject.Find("MeshEditor").GetComponent<MeshCasing>();
     }
 
     private void OnEnable()
@@ -65,16 +61,16 @@ public class MouseSlice : MonoBehaviour {
         if (drawPlane) DrawPlane(start, end, normalVec);
 
         SliceObjects(start, normalVec);
+
+        var mc = GameObject.Find("MeshEditor").GetComponent<MeshCasing>();
+        mc.generateCasing();
     }
     
 
     void SliceObjects(Vector3 point, Vector3 normal)
     {
         // hashirs code edited
-        var slicable = new List<GameObject>();
-        slicable.AddRange(GameObject.FindGameObjectsWithTag("SliceableInner"));
-        slicable.AddRange(GameObject.FindGameObjectsWithTag("SliceableOuter"));
-        var toSlice = slicable.ToArray();
+        var toSlice = GameObject.FindGameObjectsWithTag("Sliceable");
         //
         // Put results in positive and negative array so that we separate all meshes if there was a cut made
         List<Transform> positive = new List<Transform>(),
@@ -82,73 +78,72 @@ public class MouseSlice : MonoBehaviour {
 
         GameObject obj;
         bool slicedAny = false;
-        //for (int i = 0; i < toSlice.Length; ++i)
-        //{
-        //    obj = toSlice[i];
-        //    // We multiply by the inverse transpose of the worldToLocal Matrix, a.k.a the transpose of the localToWorld Matrix
-        //    // Since this is how normal are transformed
-        //    var transformedNormal = ((Vector3)(obj.transform.localToWorldMatrix.transpose * normal)).normalized;
-
-        //    //Convert plane in object's local frame
-        //    slicePlane.SetNormalAndPosition(
-        //        transformedNormal,
-        //        obj.transform.InverseTransformPoint(point));
-
-        //    slicedAny = SliceObject(ref slicePlane, obj, positive, negative, obj.tag) || slicedAny;
-        //}
-
-        if (toSlice.Length > 1)
+        for (int i = 0; i < toSlice.Length; ++i) 
         {
-            obj = toSlice[0];
-            if (obj.tag == "SliceableInner")
-            {
-                // We multiply by the inverse transpose of the worldToLocal Matrix, a.k.a the transpose of the localToWorld Matrix
-                // Since this is how normal are transformed
-                var transformedNormal = ((Vector3)(obj.transform.localToWorldMatrix.transpose * normal)).normalized;
+             obj = toSlice[i];
+            // We multiply by the inverse transpose of the worldToLocal Matrix, a.k.a the transpose of the localToWorld Matrix
+            // Since this is how normal are transformed
+            var transformedNormal = ((Vector3)(obj.transform.localToWorldMatrix.transpose * normal)).normalized;
 
-                //Convert plane in object's local frame
-                slicePlane.SetNormalAndPosition(
-                    transformedNormal,
-                    obj.transform.InverseTransformPoint(point));
+            //Convert plane in object's local frame
+            slicePlane.SetNormalAndPosition(
+                transformedNormal,
+                obj.transform.InverseTransformPoint(point));
 
-                slicedAny = SliceObject(ref slicePlane, obj, positive, negative, obj.tag) || slicedAny;
-
-                obj = toSlice[1];
-
-                transformedNormal = ((Vector3)(obj.transform.localToWorldMatrix.transpose * normal)).normalized;
-
-                //Convert plane in object's local frame
-                slicePlane.SetNormalAndPosition(
-                    transformedNormal,
-                    obj.transform.InverseTransformPoint(point));
-
-                slicedAny = SliceObject(ref slicePlane, obj, positive, negative, obj.tag) || slicedAny;
-            }
-            else
-            {
-                obj = toSlice[1];
-
-                var transformedNormal = ((Vector3)(obj.transform.localToWorldMatrix.transpose * normal)).normalized;
-
-                //Convert plane in object's local frame
-                slicePlane.SetNormalAndPosition(
-                    transformedNormal,
-                    obj.transform.InverseTransformPoint(point));
-
-                slicedAny = SliceObject(ref slicePlane, obj, positive, negative, obj.tag) || slicedAny;
-
-                obj = toSlice[0];
-
-                transformedNormal = ((Vector3)(obj.transform.localToWorldMatrix.transpose * normal)).normalized;
-
-                //Convert plane in object's local frame
-                slicePlane.SetNormalAndPosition(
-                    transformedNormal,
-                    obj.transform.InverseTransformPoint(point));
-
-                slicedAny = SliceObject(ref slicePlane, obj, positive, negative, obj.tag) || slicedAny;
-            }
+            slicedAny = SliceObject(ref slicePlane, obj, positive, negative) || slicedAny;
         }
+        // if (toSlice.Length > 1)
+        // {
+        //     obj = toSlice[0];
+        //     if (obj.tag == "SliceableInner")
+        //     {
+        //         // We multiply by the inverse transpose of the worldToLocal Matrix, a.k.a the transpose of the localToWorld Matrix
+        //         // Since this is how normal are transformed
+        //         var transformedNormal = ((Vector3)(obj.transform.localToWorldMatrix.transpose * normal)).normalized;
+
+        //         //Convert plane in object's local frame
+        //         slicePlane.SetNormalAndPosition(
+        //             transformedNormal,
+        //             obj.transform.InverseTransformPoint(point));
+
+        //         slicedAny = SliceObject(ref slicePlane, obj, positive, negative, obj.tag) || slicedAny;
+
+        //         obj = toSlice[1];
+
+        //         transformedNormal = ((Vector3)(obj.transform.localToWorldMatrix.transpose * normal)).normalized;
+
+        //         //Convert plane in object's local frame
+        //         slicePlane.SetNormalAndPosition(
+        //             transformedNormal,
+        //             obj.transform.InverseTransformPoint(point));
+
+        //         slicedAny = SliceObject(ref slicePlane, obj, positive, negative, obj.tag) || slicedAny;
+        //     }
+        //     else
+        //     {
+        //         obj = toSlice[1];
+
+        //         var transformedNormal = ((Vector3)(obj.transform.localToWorldMatrix.transpose * normal)).normalized;
+
+        //         //Convert plane in object's local frame
+        //         slicePlane.SetNormalAndPosition(
+        //             transformedNormal,
+        //             obj.transform.InverseTransformPoint(point));
+
+        //         slicedAny = SliceObject(ref slicePlane, obj, positive, negative, obj.tag) || slicedAny;
+
+        //         obj = toSlice[0];
+
+        //         transformedNormal = ((Vector3)(obj.transform.localToWorldMatrix.transpose * normal)).normalized;
+
+        //         //Convert plane in object's local frame
+        //         slicePlane.SetNormalAndPosition(
+        //             transformedNormal,
+        //             obj.transform.InverseTransformPoint(point));
+
+        //         slicedAny = SliceObject(ref slicePlane, obj, positive, negative, obj.tag) || slicedAny;
+        //     }
+        // }
 
 
         // Separate meshes if a slice was made
@@ -156,23 +151,19 @@ public class MouseSlice : MonoBehaviour {
         //    SeparateMeshes(positive, negative, normal);
     }
 
-    bool SliceObject(ref Plane slicePlane, GameObject obj, List<Transform> positiveObjects, List<Transform> negativeObjects, string tag)
+    bool SliceObject(ref Plane slicePlane, GameObject obj, List<Transform> positiveObjects, List<Transform> negativeObjects)
     {
         var mesh = obj.GetComponent<MeshFilter>().mesh;
 
-        if (!meshCutter.SliceMesh(mesh, ref slicePlane, tag))
-        {
-            // Put object in the respective list
+        if (!meshCutter.SliceMesh(mesh, ref slicePlane))
+        {            // Put object in the respective list
             if (slicePlane.GetDistanceToPoint(meshCutter.GetFirstVertex()) >= 0)
                 positiveObjects.Add(obj.transform);
             else
                 negativeObjects.Add(obj.transform);
-
             return false;
         }
-
         // TODO: Update center of mass
-
         // Silly condition that labels which mesh is bigger to keep the bigger mesh in the original gameobject
         bool posBigger = meshCutter.PositiveMesh.surfacearea > meshCutter.NegativeMesh.surfacearea;
         if (posBigger)
@@ -185,61 +176,13 @@ public class MouseSlice : MonoBehaviour {
             biggerMesh = meshCutter.NegativeMesh;
             smallerMesh = meshCutter.PositiveMesh;
         }
-
         // Create new Sliced object with the other mesh
-        //GameObject newObject = Instantiate(obj, ObjectContainer);
-        //newObject.transform.SetPositionAndRotation(obj.transform.position, obj.transform.rotation);
-        //var newObjMesh = newObject.GetComponent<MeshFilter>().mesh;
-
         // Put the bigger mesh in the original object
         // TODO: Enable collider generation (either the exact mesh or compute smallest enclosing sphere)
-        if (tag == "SliceableInner")
-        {
-            //ReplaceMesh(casing.Inner,biggerMesh);
-            if (casing.Inner == null) {
-                casing.Inner = new Mesh();
-            }
-            casing.Inner.Clear();
-            casing.Inner.SetVertices(biggerMesh.vertices);
-            casing.Inner.SetTriangles(biggerMesh.triangles, 0);
-            casing.Inner.SetNormals(biggerMesh.normals);
-            casing.Inner.SetUVs(0, biggerMesh.uvs);
-
-            //mesh.RecalculateNormals();
-            casing.Inner.RecalculateTangents();
-
-        }
-        else
-        {
-            //ReplaceMesh(casing.Outer, biggerMesh);
-            if (casing.Outer == null)
-            {
-                casing.Outer = new Mesh();
-            }
-            casing.Outer.Clear();
-            casing.Outer.SetVertices(biggerMesh.vertices);
-            casing.Outer.SetTriangles(biggerMesh.triangles, 0);
-            casing.Outer.SetNormals(biggerMesh.normals);
-            casing.Outer.SetUVs(0, biggerMesh.uvs);
-
-            //mesh.RecalculateNormals();
-            casing.Outer.RecalculateTangents();
-
-        }
-
-        if (casing.Inner!=null && casing.Outer!=null)
-        {
-            meshCasing.undoList.Push(casing);
-            casing.Inner = null;
-            casing.Outer = null;
-        }
-        
         ReplaceMesh(mesh, biggerMesh);
         //ReplaceMesh(newObjMesh, smallerMesh);
-
         (posBigger ? positiveObjects : negativeObjects).Add(obj.transform);
         //(posBigger ? negativeObjects : positiveObjects).Add(newObject.transform);
-
         return true;
     }
 

@@ -244,8 +244,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   plane: {fileID: 2133397678}
-  ObjectContainerInner: {fileID: 0}
-  ObjectContainerOuter: {fileID: 0}
+  ObjectContainer: {fileID: 0}
   separation: 0
   drawPlane: 0
   lineRenderer: {fileID: 668827837}
@@ -441,37 +440,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   handObj: {fileID: 0}
---- !u!1 &984808280
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 984808281}
-  m_Layer: 0
-  m_Name: Temp
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &984808281
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 984808280}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 7
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1128187854
 GameObject:
   m_ObjectHideFlags: 0
@@ -668,7 +636,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   casingMaterial: {fileID: 2100000, guid: 3c5cc73274db890459cafeb6387560e7, type: 2}
-  CasingPanel: {fileID: 0}
   CasingOuter: {fileID: 0}
   CasingInner: {fileID: 0}
   isCasingGenerated: 0
@@ -849,7 +816,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1866565653
 GameObject:
