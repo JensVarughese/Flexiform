@@ -131,7 +131,7 @@ public class FileExporter : MonoBehaviour
             sb.Append("  endloop\n");
             sb.Append(" endfacet\n");
         }
-        for(var i = 0; i < innerTraingles.Length; i +=3) {
+        for(var i = 0; i < outerTraingles.Length; i +=3) {
             sb.Append(" facet normal 0.0 0.0 0.0\n");
             sb.Append("  outer loop\n");
             sb.Append("   vertex " + outerVertices[outerTraingles[i]].x + " " + outerVertices[outerTraingles[i]].y + " " + outerVertices[outerTraingles[i]].z + "\n");
