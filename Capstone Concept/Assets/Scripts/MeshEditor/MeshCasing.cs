@@ -19,7 +19,7 @@ public class MeshCasing : MonoBehaviour
 
     public void Update()
     {
-        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyUp(KeyCode.Z))
+        if (Input.GetKeyUp(KeyCode.Z))
         {
             if (undoList.Count>=2)
             {
@@ -33,7 +33,6 @@ public class MeshCasing : MonoBehaviour
                 CasingInner.transform.GetChild(0).GetComponent<MeshFilter>().mesh = temp;
                 generateCasing();
             }
-            
         }
     }
 

@@ -83,7 +83,7 @@ public class UIController : MonoBehaviour
     {
         // do exporting code
         Debug.Log("Exporting Hand..");
-        fileExporter.onClickSave(ExportType.Obj);
+        fileExporter.onClickSave(ExportType.Stl);
     }
 
 }
