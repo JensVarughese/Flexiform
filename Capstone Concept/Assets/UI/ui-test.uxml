@@ -8,7 +8,7 @@
             <ui:Button text="Export" display-tooltip-when-elided="true" name="export-hand" class="button" />
         </ui:VisualElement>
         <ui:VisualElement name="casing-panel" style="position: absolute; left: 20%; top: 20%; right: 20%; bottom: 20%; background-color: rgba(255, 255, 255, 0.78); border-top-left-radius: 5px; border-bottom-left-radius: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; display: none;">
-            <ui:Label text="Generate Casing" display-tooltip-when-elided="true" name="casing-title" style="border-bottom-width: 2px; border-bottom-color: rgb(8, 200, 255); max-width: 173px; color: rgb(159, 159, 159); font-size: 25%;" />
+            <ui:Label text="Generate Casing" display-tooltip-when-elided="true" name="casing-title" style="border-bottom-width: 2px; border-bottom-color: rgb(0, 54, 125); max-width: 173px; color: rgb(159, 159, 159); font-size: 25%; display: flex;" />
             <ui:Slider picking-mode="Ignore" label="Thickness (1mm)" value="1" high-value="7" low-value="1" name="thickness-slider" style="margin-top: 1px; top: 20%; font-size: 50%; -unity-text-align: upper-left; white-space: normal; display: flex; -unity-font-style: bold; width: auto; justify-content: space-between;" />
             <ui:Button text="Cancel" display-tooltip-when-elided="true" name="cancel-casing" class="button" style="position: absolute; justify-content: flex-start; left: 1%; top: auto; bottom: 1%; max-width: 25%; width: 40%; height: 10%;" />
             <ui:Button text="Generate" display-tooltip-when-elided="true" name="generate-button" class="button" style="position: absolute; justify-content: flex-start; left: auto; top: auto; bottom: 1%; max-width: 25%; width: 45%; right: 1%; height: 10%;" />

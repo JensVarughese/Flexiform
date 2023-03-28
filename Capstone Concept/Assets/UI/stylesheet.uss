@@ -1,5 +1,5 @@
 .unity-base-slider__dragger {
-    background-color: rgb(8, 200, 255);
+    background-color: #00367d;
     border-radius: 3px;
     border-color: rgba(255, 255, 255, 0);
     height: 70%;
@@ -19,7 +19,7 @@
     width: 55%;
     height: 100%;
     background-color: rgba(255, 255, 255, 0.71);
-    color: rgb(8, 200, 255);
+    color: #00367d;
     -unity-font-style: bold;
     font-size: 95%;
     flex-wrap: nowrap;
@@ -38,10 +38,10 @@
     background-image: none;
     max-width: initial;
     max-height: initial;
-    border-left-color: rgb(8, 200, 255);
-    border-right-color: rgb(8, 200, 255);
-    border-top-color: rgb(8, 200, 255);
-    border-bottom-color: rgb(8, 200, 255);
+    border-left-color: #00367d;
+    border-right-color: #00367d;
+    border-top-color: #00367d;
+    border-bottom-color: #00367d;
     border-left-width: 2px;
     border-right-width: 2px;
     border-top-width: 2px;
@@ -49,7 +49,7 @@
 }
 
 .button:hover {
-    background-color: rgb(100, 220, 255);
+    background-color: #00367d;
     border-color: rgba(255, 255, 255, 0);
     color: rgb(255, 255, 255);
     transition-timing-function: ease;
@@ -57,7 +57,7 @@
 }
 
 .button:active {
-    background-color: rgb(60, 210, 255);
+    background-color: #3571BF;
     border-color: rgba(255, 255, 255, 0);
     color: rgb(255, 255, 255);
     transition-timing-function: ease;
