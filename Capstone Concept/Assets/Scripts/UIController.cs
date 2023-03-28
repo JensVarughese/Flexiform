@@ -11,9 +11,16 @@ public class UIController : MonoBehaviour
     public FileExporter fileExporter;
     public MeshCasing meshCasing;
     public ScreenLineRenderer screenLineRenderer;
+    public TransformController transformController;
 
     VisualElement casingPanel;
     Slider thicknessSlider;
+
+    Slider xSlider;
+    Slider ySlider;
+    Slider zSlider;
+    const int positionRange = 100;
+    bool isPositionChanging = false;
 
     // Start is called before the first frame update
     void Start()
@@ -32,6 +39,15 @@ public class UIController : MonoBehaviour
         thicknessSlider.label = "Thickness: " + thicknessSlider.value + "mm";
         casingPanel = root.Q<VisualElement>("casing-panel");
 
+        // handle Sliders
+        xSlider = root.Q<Slider>("x-slider");
+        ySlider = root.Q<Slider>("y-slider");
+        zSlider = root.Q<Slider>("z-slider");
+        UpdatePositionSliders();
+        xSlider.RegisterValueChangedCallback(v => OnPositionChange(v, xSlider));
+        ySlider.RegisterValueChangedCallback(v => OnPositionChange(v, ySlider));
+        zSlider.RegisterValueChangedCallback(v => OnPositionChange(v, zSlider));
+
         loadHandButton.clicked += () => loadHandButtonPressed();
         generatePanelButton.clicked += () => generateButtonPressed();
         cancelCasingButton.clicked += () => CancelCasing();
@@ -40,6 +56,43 @@ public class UIController : MonoBehaviour
         exportHandButton.clicked += () => exportHandButtonPressed();
         thicknessSlider.RegisterValueChangedCallback(v => OnSliderChange(v));
 
+    }
+
+    void Update()
+    {
+        if(isPositionChanging && Input.GetMouseButtonUp(0)) {
+            UpdatePositionSliders();
+        }
+    }
+
+    void UpdatePositionSliders()
+    {
+        var position = transformController.GetPosition();
+        xSlider.highValue = position.x + positionRange;
+        xSlider.lowValue = position.x - positionRange;
+        xSlider.value = position.x;
+
+        ySlider.highValue = position.y + positionRange;
+        ySlider.lowValue = position.y - positionRange;
+        ySlider.value = position.y;
+
+        ySlider.highValue = position.y + positionRange;
+        ySlider.lowValue = position.y - positionRange;
+        ySlider.value = position.y;
+
+        zSlider.highValue = position.z + positionRange;
+        zSlider.lowValue = position.z - positionRange;
+        zSlider.value = position.z;
+
+        isPositionChanging = false;
+    }
+    void OnPositionChange(ChangeEvent<float> v, Slider slider) {
+        isPositionChanging = true;
+        if(slider.value / slider.highValue > 0.95f) 
+            slider.highValue++;
+        if(slider.lowValue / slider.value > 0.95f) 
+            slider.lowValue--;
+        transformController.ChangePosition(new Vector3(xSlider.value, ySlider.value, zSlider.value));
     }
 
     void OnSliderChange(ChangeEvent<float> v)
