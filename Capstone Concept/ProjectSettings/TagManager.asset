@@ -8,6 +8,7 @@ TagManager:
   - SliceableInner
   - SliceableOuter
   - Selectable
+  - Socket
   layers:
   - Default
   - TransparentFX

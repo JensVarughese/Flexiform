@@ -135,25 +135,21 @@ public class MeshCasing : MonoBehaviour
 
     public void IntegrateSocket(GameObject socket, GameObject handle)
     {
-        var meshSocket = socket.transform.GetChild(0).GetComponent<MeshFilter>().mesh;
-        var meshOuter = CasingOuter.transform.GetChild(0).GetComponent<MeshFilter>().mesh;
-        var oLength = meshOuter.vertexCount;
-        var outerVerts = meshOuter.vertices.ToList();
-        var outerTriangles = meshOuter.triangles.ToList();
+        var newSocket = Instantiate(socket, Vector3.zero, Quaternion.identity);
+        newSocket.transform.GetChild(0).GetComponent<MeshRenderer>().material = casingMaterial;
+        newSocket.transform.GetChild(0).tag = "Socket";
+        var meshSocket = newSocket.transform.GetChild(0).GetComponent<MeshFilter>().mesh;
+        var verts = meshSocket.vertices;
+
         for(var i = 0; i < meshSocket.vertexCount; i++)
         {
-            outerVerts.Add(socket.transform.TransformVector(meshSocket.vertices[i]) + socket.transform.position);
-        }
-        for(var i = 0; i < meshSocket.triangles.Length; i++)
-        {
-            outerTriangles.Add(meshSocket.triangles[i] + oLength);
+            verts[i] = socket.transform.TransformVector(meshSocket.vertices[i]) + socket.transform.position;
         }
 
-        meshOuter.vertices = outerVerts.ToArray();
-        meshOuter.triangles = outerTriangles.ToArray();
-        meshOuter.RecalculateNormals();
-        meshOuter.RecalculateTangents();
-        meshOuter.RecalculateBounds();
+        meshSocket.vertices = verts;
+        meshSocket.RecalculateNormals();
+        meshSocket.RecalculateBounds();
+        meshSocket.RecalculateTangents();
 
         socket.transform.position = new Vector3(0, 0, 0);
         socket.transform.rotation = Quaternion.identity;
