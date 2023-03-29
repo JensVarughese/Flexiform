@@ -17,6 +17,22 @@
     min-width: 10px;
 }
 
+.unity-base-field__label {
+    min-width: 5px;
+    color: rgb(0, 54, 125);
+}
+
+.unity-base-popup-field__input {
+    background-color: rgb(255, 255, 255);
+    height: 40px;
+    margin-top: 5px;
+    border-color: rgb(230, 230, 230);
+}
+
+.unity-base-popup-field__text {
+    color: rgb(0, 54, 125);
+}
+
 .button {
     width: 55%;
     height: 100%;
@@ -63,4 +79,8 @@
     border-color: rgba(255, 255, 255, 0);
     color: rgb(255, 255, 255);
     transition-timing-function: ease;
+}
+
+.label {
+    color: rgba(0, 54, 125, 255);
 }

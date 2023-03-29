@@ -12,14 +12,21 @@ public class UIController : MonoBehaviour
     public MeshCasing meshCasing;
     public ScreenLineRenderer screenLineRenderer;
     public TransformController transformController;
+    public CameraController cameraController;
 
     VisualElement casingPanel;
+    VisualElement socketSelectionPanel;
+    VisualElement socketTransformPanel;
     Slider thicknessSlider;
 
     Slider xSlider;
     Slider ySlider;
     Slider zSlider;
-    const int positionRange = 100;
+    Slider xRotSlider;
+    Slider yRotSlider;
+    Slider zRotSlider;
+
+    const int positionRange = 50;
     bool isPositionChanging = false;
 
     // Start is called before the first frame update
@@ -32,14 +39,21 @@ public class UIController : MonoBehaviour
         Button generatePanelButton = root.Q<Button>("generate-casing");
         Button cancelCasingButton = root.Q<Button>("cancel-casing");
         Button generateCasingButton = root.Q<Button>("generate-button");
-
         Button cutButton = root.Q<Button>("cut");
+        Button socketButton = root.Q<Button>("socket");
         Button exportHandButton = root.Q<Button>("export-hand");
         thicknessSlider = root.Q<Slider>("thickness-slider");
         thicknessSlider.label = "Thickness: " + thicknessSlider.value + "mm";
         casingPanel = root.Q<VisualElement>("casing-panel");
 
-        // handle Sliders
+        // socket selection panel
+        socketSelectionPanel = root.Q<VisualElement>("socket-selection-panel");
+        DropdownField socketSelectDropDown = root.Q<DropdownField>("socket-selection");
+        Button socketSelectButton = root.Q<Button>("socket-selection-button");
+        socketTransformPanel = root.Q<VisualElement>("socket-transform-panel");
+        socketSelectButton.clicked += () => SelectSocket(socketSelectDropDown.value);
+
+        // socket panel
         xSlider = root.Q<Slider>("x-slider");
         ySlider = root.Q<Slider>("y-slider");
         zSlider = root.Q<Slider>("z-slider");
@@ -47,15 +61,23 @@ public class UIController : MonoBehaviour
         xSlider.RegisterValueChangedCallback(v => OnPositionChange(v, xSlider));
         ySlider.RegisterValueChangedCallback(v => OnPositionChange(v, ySlider));
         zSlider.RegisterValueChangedCallback(v => OnPositionChange(v, zSlider));
+        xRotSlider = root.Q<Slider>("x-rot-slider");
+        yRotSlider = root.Q<Slider>("y-rot-slider");
+        zRotSlider = root.Q<Slider>("z-rot-slider");
+        xRotSlider.RegisterValueChangedCallback(v => OnRotationChange());
+        yRotSlider.RegisterValueChangedCallback(v => OnRotationChange());
+        zRotSlider.RegisterValueChangedCallback(v => OnRotationChange());
+        Button addSocketButton = root.Q<Button>("add-socket");
+        addSocketButton.clicked += () => AddSocket();
 
         loadHandButton.clicked += () => loadHandButtonPressed();
         generatePanelButton.clicked += () => generateButtonPressed();
         cancelCasingButton.clicked += () => CancelCasing();
         generateCasingButton.clicked += () => GenerateCasing();
         cutButton.clicked += () => cutButtonPressed();
+        socketButton.clicked += () => socketButtonPressed();
         exportHandButton.clicked += () => exportHandButtonPressed();
         thicknessSlider.RegisterValueChangedCallback(v => OnSliderChange(v));
-
     }
 
     void Update()
@@ -63,6 +85,17 @@ public class UIController : MonoBehaviour
         if(isPositionChanging && Input.GetMouseButtonUp(0)) {
             UpdatePositionSliders();
         }
+    }
+
+    void SelectSocket(string selection)
+    {
+        var camCenter = cameraController.GetCameraPostion();
+        var position = (cameraController.handCenter * 0.75f) + (camCenter * 0.25f);
+        transformController.LoadSocket(selection, position);
+        UpdatePositionSliders();
+        UpdateRotationSliders();
+        socketSelectionPanel.style.display = DisplayStyle.None;
+        socketTransformPanel.style.display = DisplayStyle.Flex;
     }
 
     void UpdatePositionSliders()
@@ -86,6 +119,20 @@ public class UIController : MonoBehaviour
 
         isPositionChanging = false;
     }
+    void UpdateRotationSliders()
+    {
+        var rotation = transformController.GetEulers();
+        xRotSlider.highValue = -360;
+        xRotSlider.lowValue = 360;
+        xRotSlider.value = rotation.x;
+        yRotSlider.highValue = -360;
+        yRotSlider.lowValue = 360;
+        yRotSlider.value = rotation.y;
+        zRotSlider.highValue = -360;
+        zRotSlider.lowValue = 360;
+        zRotSlider.value = rotation.z;
+    }
+
     void OnPositionChange(ChangeEvent<float> v, Slider slider) {
         isPositionChanging = true;
         if(slider.value / slider.highValue > 0.95f) 
@@ -94,6 +141,19 @@ public class UIController : MonoBehaviour
             slider.lowValue--;
         transformController.ChangePosition(new Vector3(xSlider.value, ySlider.value, zSlider.value));
     }
+
+    void AddSocket()
+    {
+        meshCasing.IntegrateSocket(transformController.SelectedSocket);
+        socketTransformPanel.style.display = DisplayStyle.None;
+    }
+
+    void OnRotationChange()
+    {
+        var rotation = Quaternion.Euler(xRotSlider.value, yRotSlider.value, zRotSlider.value);
+        transformController.ChangeRotation(rotation);
+    }
+
 
     void OnSliderChange(ChangeEvent<float> v)
     {
@@ -130,6 +190,14 @@ public class UIController : MonoBehaviour
     {
         // do mesh cutting code
         screenLineRenderer.EnableSlicing();
+    }
+
+    void socketButtonPressed()
+    {
+        if(socketSelectionPanel.style.display != DisplayStyle.Flex)
+            socketSelectionPanel.style.display = DisplayStyle.Flex;
+        else
+            socketSelectionPanel.style.display = DisplayStyle.None;
     }
 
     void exportHandButtonPressed()

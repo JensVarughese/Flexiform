@@ -1,4 +1,0 @@
-repository "Capstone@Synthesium@cloud"
-  path "/"
-    br "/main"
-    co "/main"

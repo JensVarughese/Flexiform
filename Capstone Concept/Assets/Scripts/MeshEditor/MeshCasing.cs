@@ -7,10 +7,11 @@ public class MeshCasing : MonoBehaviour
 {
     private GameObject handObj;
     public Material casingMaterial;
+    [HideInInspector]
     public GameObject CasingOuter;
+    [HideInInspector]
     public GameObject CasingInner;
-    private GameObject CasingOuterOriginal;
-    private GameObject CasingInnerOriginal;
+    [HideInInspector]
     public bool isCasingGenerated = false;
     public float thicknessInMillimeters = 1;
     FileExplorer fileExplorer;
@@ -84,7 +85,7 @@ public class MeshCasing : MonoBehaviour
         
         // create outer mesh
         var outerVerts = new List<Vector3>();
-        var outerTraingles = new List<int>();
+        var outerTriangles = new List<int>();
         var normalsCollection = new Dictionary<Vector3, Vector3>();
         for(var i = 0; i < innerTriangles.Length; i +=3) {
             var v1 = innerVerts[innerTriangles[i]];
@@ -93,16 +94,16 @@ public class MeshCasing : MonoBehaviour
             var v4 = v1 + GetNormal(ref normalsCollection, normals[innerTriangles[i]], v1) * thicknessInMillimeters * -1;
             var v5 = v2 + GetNormal(ref normalsCollection, normals[innerTriangles[i + 1]], v2) * thicknessInMillimeters  * -1;
             var v6 = v3 + GetNormal(ref normalsCollection, normals[innerTriangles[i + 2]], v3) * thicknessInMillimeters  * -1;
-            AddTriangle(outerVerts, outerTraingles, v4, v6, v5);
-            AddTriangle(outerVerts, outerTraingles, v1, v3, v6);
-            AddTriangle(outerVerts, outerTraingles, v1, v6, v4);
-            AddTriangle(outerVerts, outerTraingles, v2, v1, v4);
-            AddTriangle(outerVerts, outerTraingles, v2, v4, v5);
-            AddTriangle(outerVerts, outerTraingles, v3, v2, v5);
-            AddTriangle(outerVerts, outerTraingles, v3, v5, v6);
+            AddTriangle(outerVerts, outerTriangles, v4, v6, v5);
+            AddTriangle(outerVerts, outerTriangles, v1, v3, v6);
+            AddTriangle(outerVerts, outerTriangles, v1, v6, v4);
+            AddTriangle(outerVerts, outerTriangles, v2, v1, v4);
+            AddTriangle(outerVerts, outerTriangles, v2, v4, v5);
+            AddTriangle(outerVerts, outerTriangles, v3, v2, v5);
+            AddTriangle(outerVerts, outerTriangles, v3, v5, v6);
         }
         meshOuter.vertices = outerVerts.ToArray();
-        meshOuter.triangles = outerTraingles.ToArray();
+        meshOuter.triangles = outerTriangles.ToArray();
         meshOuter.RecalculateNormals();
         meshOuter.RecalculateTangents();
         meshOuter.RecalculateBounds();
@@ -130,6 +131,33 @@ public class MeshCasing : MonoBehaviour
         undoList.Push(saveInnner);
 
         isCasingGenerated = true;
+    }
+
+    public void IntegrateSocket(GameObject Socket)
+    {
+        var meshSocket = Socket.transform.GetChild(0).GetComponent<MeshFilter>().mesh;
+        var meshOuter = CasingOuter.transform.GetChild(0).GetComponent<MeshFilter>().mesh;
+        var oLength = meshOuter.vertexCount;
+        var outerVerts = meshOuter.vertices.ToList();
+        var outerTriangles = meshOuter.triangles.ToList();
+        for(var i = 0; i < meshSocket.vertexCount; i++)
+        {
+            outerVerts.Add(Socket.transform.TransformVector(meshSocket.vertices[i]) + Socket.transform.position);
+        }
+        for(var i = 0; i < meshSocket.triangles.Length; i++)
+        {
+            outerTriangles.Add(meshSocket.triangles[i] + oLength);
+        }
+
+        meshOuter.vertices = outerVerts.ToArray();
+        meshOuter.triangles = outerTriangles.ToArray();
+        meshOuter.RecalculateNormals();
+        meshOuter.RecalculateTangents();
+        meshOuter.RecalculateBounds();
+
+        Socket.transform.position = new Vector3(0, 0, 0);
+        Socket.transform.rotation = Quaternion.identity;
+        Socket.SetActive(false);
     }
 
     /// <summary>
