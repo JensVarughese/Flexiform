@@ -116,14 +116,18 @@ public class FileExporter : MonoBehaviour
     }
 
     public string MeshtoStrStl(Mesh meshInner, Mesh meshOuter) {
+        var sockets = GameObject.FindGameObjectsWithTag("Socket");
         StringBuilder sb = new StringBuilder();
         var innerVerticies = meshInner.vertices;
+        var innerNormals = meshInner.normals;
         var innerTraingles = meshInner.triangles;
         var outerVertices = meshOuter.vertices;
+        var outerNormals = meshOuter.normals;
         var outerTraingles = meshOuter.triangles;
         sb.Append("solid model.stl\n");
         for(var i = 0; i < innerTraingles.Length; i +=3) {
-            sb.Append(" facet normal 0.0 0.0 0.0\n");
+            var normal = Vector3.Normalize(innerNormals[innerTraingles[i]] + innerNormals[innerTraingles[i + 1]] + innerNormals[innerTraingles[i + 2]]);
+            sb.Append(" facet normal " + normal.x + " " + normal.y + " " + normal.z + "\n");
             sb.Append("  outer loop\n");
             sb.Append("   vertex " + innerVerticies[innerTraingles[i]].x + " " + innerVerticies[innerTraingles[i]].y + " " + innerVerticies[innerTraingles[i]].z + "\n");
             sb.Append("   vertex " + innerVerticies[innerTraingles[i + 1]].x + " " + innerVerticies[innerTraingles[i + 1]].y + " " + innerVerticies[innerTraingles[i + 1]].z + "\n");
@@ -132,13 +136,32 @@ public class FileExporter : MonoBehaviour
             sb.Append(" endfacet\n");
         }
         for(var i = 0; i < outerTraingles.Length; i +=3) {
-            sb.Append(" facet normal 0.0 0.0 0.0\n");
+            var normal = Vector3.Normalize(outerNormals[outerTraingles[i]] + outerNormals[outerTraingles[i + 1]] + outerNormals[outerTraingles[i + 2]]);
+            sb.Append(" facet normal " + normal.x + " " + normal.y + " " + normal.z + "\n");
             sb.Append("  outer loop\n");
             sb.Append("   vertex " + outerVertices[outerTraingles[i]].x + " " + outerVertices[outerTraingles[i]].y + " " + outerVertices[outerTraingles[i]].z + "\n");
             sb.Append("   vertex " + outerVertices[outerTraingles[i + 1]].x + " " + outerVertices[outerTraingles[i + 1]].y + " " + outerVertices[outerTraingles[i + 1]].z + "\n");
             sb.Append("   vertex " + outerVertices[outerTraingles[i + 2]].x + " " + outerVertices[outerTraingles[i + 2]].y + " " + outerVertices[outerTraingles[i + 2]].z + "\n");
             sb.Append("  endloop\n");
             sb.Append(" endfacet\n");
+        }
+        foreach(var socket in sockets)
+        {
+           var mesh = socket.GetComponentsInChildren<MeshFilter>()[0].mesh;
+            var verts = mesh.vertices;
+            var normals = mesh.normals;
+            var triangles = mesh.triangles;
+            for(int i = 0; i < triangles.Length; i+= 3)
+            {
+                var normal = Vector3.Normalize(normals[triangles[i]]+normals[triangles[i+1]]+normals[triangles[i+2]]);
+                sb.Append(" facet normal "+normal.x+" "+normal.y+" "+normal.z+"\n");
+                sb.Append("  outer loop\n");
+                sb.Append("   vertex "+verts[triangles[i]].x+" "+verts[triangles[i]].y+" "+verts[triangles[i]].z+"\n");
+                sb.Append("   vertex "+verts[triangles[i+1]].x+" "+verts[triangles[i+1]].y+" "+verts[triangles[i+1]].z+"\n");
+                sb.Append("   vertex "+verts[triangles[i+2]].x+" "+verts[triangles[i+2]].y+" "+verts[triangles[i+2]].z+"\n");
+                sb.Append("  endloop\n");
+                sb.Append(" endfacet\n");
+            }
         }
         sb.Append("endsolid model.stl\n");
         return sb.ToString();

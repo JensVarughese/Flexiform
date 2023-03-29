@@ -6,7 +6,8 @@ public class CameraController : MonoBehaviour
     public GameObject handObj;
     private Transform cameraTransform;
     private Transform parentTransform;
-    private Vector3 handCenter;
+    [HideInInspector]
+    public Vector3 handCenter { get; private set; }
     private Vector3? mousePos;
     private float distance;
     FileExplorer fileExplorer;
@@ -59,6 +60,12 @@ public class CameraController : MonoBehaviour
         //allows zooming
         ZoomCamera(Input.mouseScrollDelta.y);
     }
+
+    public Vector3 GetCameraPostion()
+    {
+        return transform.position;
+    }
+
 
     private Vector3 GetCenter(Mesh mesh)
     {
