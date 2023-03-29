@@ -15,6 +15,11 @@ public class UIController : MonoBehaviour
     public TransformController transformController;
     public CameraController cameraController;
 
+    Button generatePanelButton;
+    Button cutButton;
+    Button socketButton;
+    Button exportHandButton;
+
     VisualElement casingPanel;
     VisualElement socketSelectionPanel;
     VisualElement socketTransformPanel;
@@ -27,15 +32,21 @@ public class UIController : MonoBehaviour
 
         Button loadHandButton = root.Q<Button>("load-hand");
 
-        Button generatePanelButton = root.Q<Button>("generate-casing");
+        generatePanelButton = root.Q<Button>("generate-casing");
         Button cancelCasingButton = root.Q<Button>("cancel-casing");
         Button generateCasingButton = root.Q<Button>("generate-button");
-        Button cutButton = root.Q<Button>("cut");
-        Button socketButton = root.Q<Button>("socket");
-        Button exportHandButton = root.Q<Button>("export-hand");
+        cutButton = root.Q<Button>("cut");
+        socketButton = root.Q<Button>("socket");
+        exportHandButton = root.Q<Button>("export-hand");
+
+        generatePanelButton.SetEnabled(false);
+        cutButton.SetEnabled(false);
+        socketButton.SetEnabled(false);
+        exportHandButton.SetEnabled(false);
         thicknessSlider = root.Q<Slider>("thickness-slider");
         thicknessSlider.label = "Thickness: " + thicknessSlider.value + "mm";
         casingPanel = root.Q<VisualElement>("casing-panel");
+        thicknessSlider.RegisterValueChangedCallback(v => OnSliderChange(v));
 
         // socket selection panel
         socketSelectionPanel = root.Q<VisualElement>("socket-selection-panel");
@@ -45,8 +56,13 @@ public class UIController : MonoBehaviour
         socketSelectButton.clicked += () => SelectSocket(socketSelectDropDown.value);
 
         // socket panel
+        Button positionModeButton = root.Q<Button>("position-selection");
+        Button rotationModeButton = root.Q<Button>("rotation-selection");
         Button addSocketButton = root.Q<Button>("add-socket");
+        positionModeButton.clicked += () => transformController.ChangeHandleType(HandleType.POSITION);
+        rotationModeButton.clicked += () => transformController.ChangeHandleType(HandleType.ROTATION);
         addSocketButton.clicked += () => AddSocket();
+        
 
         loadHandButton.clicked += () => loadHandButtonPressed();
         generatePanelButton.clicked += () => generateButtonPressed();
@@ -55,7 +71,6 @@ public class UIController : MonoBehaviour
         cutButton.clicked += () => cutButtonPressed();
         socketButton.clicked += () => socketButtonPressed();
         exportHandButton.clicked += () => exportHandButtonPressed();
-        thicknessSlider.RegisterValueChangedCallback(v => OnSliderChange(v));
     }
 
     void Update()
@@ -66,6 +81,10 @@ public class UIController : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.E))
         {
             transformController.ChangeHandleType(HandleType.ROTATION);
+        }
+        if(Input.GetKeyUp(KeyCode.C))
+        {
+            screenLineRenderer.EnableSlicing();
         }
     }
 
@@ -84,17 +103,17 @@ public class UIController : MonoBehaviour
         socketTransformPanel.style.display = DisplayStyle.None;
     }
 
+    void loadHandButtonPressed() 
+    {
+        // do load hand code
+        fileExplorer.OpenFileBrowser();
+        generatePanelButton.SetEnabled(true);
+    }
 
     void OnSliderChange(ChangeEvent<float> v)
     {
         thicknessSlider.label = "Thickness: " + v.newValue.ToString("n2") + "mm";
         meshCasing.thicknessInMillimeters = v.newValue;
-    }
-
-    void loadHandButtonPressed() 
-    {
-        // do load hand code
-        fileExplorer.OpenFileBrowser();
     }
 
     void generateButtonPressed()
@@ -114,6 +133,9 @@ public class UIController : MonoBehaviour
     {
         casingPanel.style.display = DisplayStyle.None;
         meshCasing.generateCasing();
+        cutButton.SetEnabled(true);
+        socketButton.SetEnabled(true);
+        exportHandButton.SetEnabled(true);
     }
 
     void cutButtonPressed()
