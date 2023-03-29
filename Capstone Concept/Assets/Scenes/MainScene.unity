@@ -247,6 +247,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 1ff11f6b9abb86947b61c573f287277b, type: 3}
+      propertyPath: m_TagString
+      value: Selectable
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1ff11f6b9abb86947b61c573f287277b, type: 3}
 --- !u!1 &668827835
@@ -710,7 +714,6 @@ MonoBehaviour:
   CasingOuter: {fileID: 0}
   CasingInner: {fileID: 0}
   isCasingGenerated: 0
-  Socket: {fileID: 1037327910}
   thicknessInMillimeters: 1
 --- !u!4 &1272389267
 Transform:
@@ -901,6 +904,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 72e67c44ecc87434f98e5c5dc135c49a, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 72e67c44ecc87434f98e5c5dc135c49a, type: 3}
+      propertyPath: m_TagString
+      value: Selectable
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 72e67c44ecc87434f98e5c5dc135c49a, type: 3}

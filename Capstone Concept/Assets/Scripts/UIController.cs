@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using RuntimeHandle;
 
 //import other classes
 
@@ -18,16 +19,6 @@ public class UIController : MonoBehaviour
     VisualElement socketSelectionPanel;
     VisualElement socketTransformPanel;
     Slider thicknessSlider;
-
-    Slider xSlider;
-    Slider ySlider;
-    Slider zSlider;
-    Slider xRotSlider;
-    Slider yRotSlider;
-    Slider zRotSlider;
-
-    const int positionRange = 50;
-    bool isPositionChanging = false;
 
     // Start is called before the first frame update
     void Start()
@@ -54,19 +45,6 @@ public class UIController : MonoBehaviour
         socketSelectButton.clicked += () => SelectSocket(socketSelectDropDown.value);
 
         // socket panel
-        xSlider = root.Q<Slider>("x-slider");
-        ySlider = root.Q<Slider>("y-slider");
-        zSlider = root.Q<Slider>("z-slider");
-        UpdatePositionSliders();
-        xSlider.RegisterValueChangedCallback(v => OnPositionChange(v, xSlider));
-        ySlider.RegisterValueChangedCallback(v => OnPositionChange(v, ySlider));
-        zSlider.RegisterValueChangedCallback(v => OnPositionChange(v, zSlider));
-        xRotSlider = root.Q<Slider>("x-rot-slider");
-        yRotSlider = root.Q<Slider>("y-rot-slider");
-        zRotSlider = root.Q<Slider>("z-rot-slider");
-        xRotSlider.RegisterValueChangedCallback(v => OnRotationChange());
-        yRotSlider.RegisterValueChangedCallback(v => OnRotationChange());
-        zRotSlider.RegisterValueChangedCallback(v => OnRotationChange());
         Button addSocketButton = root.Q<Button>("add-socket");
         addSocketButton.clicked += () => AddSocket();
 
@@ -82,8 +60,12 @@ public class UIController : MonoBehaviour
 
     void Update()
     {
-        if(isPositionChanging && Input.GetMouseButtonUp(0)) {
-            UpdatePositionSliders();
+        if(Input.GetKeyUp(KeyCode.W)) {
+            transformController.ChangeHandleType(HandleType.POSITION);
+        }
+        if (Input.GetKeyUp(KeyCode.E))
+        {
+            transformController.ChangeHandleType(HandleType.ROTATION);
         }
     }
 
@@ -92,66 +74,14 @@ public class UIController : MonoBehaviour
         var camCenter = cameraController.GetCameraPostion();
         var position = (cameraController.handCenter * 0.75f) + (camCenter * 0.25f);
         transformController.LoadSocket(selection, position);
-        UpdatePositionSliders();
-        UpdateRotationSliders();
         socketSelectionPanel.style.display = DisplayStyle.None;
         socketTransformPanel.style.display = DisplayStyle.Flex;
     }
 
-    void UpdatePositionSliders()
-    {
-        var position = transformController.GetPosition();
-        xSlider.highValue = position.x + positionRange;
-        xSlider.lowValue = position.x - positionRange;
-        xSlider.value = position.x;
-
-        ySlider.highValue = position.y + positionRange;
-        ySlider.lowValue = position.y - positionRange;
-        ySlider.value = position.y;
-
-        ySlider.highValue = position.y + positionRange;
-        ySlider.lowValue = position.y - positionRange;
-        ySlider.value = position.y;
-
-        zSlider.highValue = position.z + positionRange;
-        zSlider.lowValue = position.z - positionRange;
-        zSlider.value = position.z;
-
-        isPositionChanging = false;
-    }
-    void UpdateRotationSliders()
-    {
-        var rotation = transformController.GetEulers();
-        xRotSlider.highValue = -360;
-        xRotSlider.lowValue = 360;
-        xRotSlider.value = rotation.x;
-        yRotSlider.highValue = -360;
-        yRotSlider.lowValue = 360;
-        yRotSlider.value = rotation.y;
-        zRotSlider.highValue = -360;
-        zRotSlider.lowValue = 360;
-        zRotSlider.value = rotation.z;
-    }
-
-    void OnPositionChange(ChangeEvent<float> v, Slider slider) {
-        isPositionChanging = true;
-        if(slider.value / slider.highValue > 0.95f) 
-            slider.highValue++;
-        if(slider.lowValue / slider.value > 0.95f) 
-            slider.lowValue--;
-        transformController.ChangePosition(new Vector3(xSlider.value, ySlider.value, zSlider.value));
-    }
-
     void AddSocket()
     {
-        meshCasing.IntegrateSocket(transformController.SelectedSocket);
+        meshCasing.IntegrateSocket(transformController.SelectedSocket, transformController.runtimeTransformGameObj);
         socketTransformPanel.style.display = DisplayStyle.None;
-    }
-
-    void OnRotationChange()
-    {
-        var rotation = Quaternion.Euler(xRotSlider.value, yRotSlider.value, zRotSlider.value);
-        transformController.ChangeRotation(rotation);
     }
 
 

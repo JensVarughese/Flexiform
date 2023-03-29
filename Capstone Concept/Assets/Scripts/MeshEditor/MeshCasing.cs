@@ -133,16 +133,16 @@ public class MeshCasing : MonoBehaviour
         isCasingGenerated = true;
     }
 
-    public void IntegrateSocket(GameObject Socket)
+    public void IntegrateSocket(GameObject socket, GameObject handle)
     {
-        var meshSocket = Socket.transform.GetChild(0).GetComponent<MeshFilter>().mesh;
+        var meshSocket = socket.transform.GetChild(0).GetComponent<MeshFilter>().mesh;
         var meshOuter = CasingOuter.transform.GetChild(0).GetComponent<MeshFilter>().mesh;
         var oLength = meshOuter.vertexCount;
         var outerVerts = meshOuter.vertices.ToList();
         var outerTriangles = meshOuter.triangles.ToList();
         for(var i = 0; i < meshSocket.vertexCount; i++)
         {
-            outerVerts.Add(Socket.transform.TransformVector(meshSocket.vertices[i]) + Socket.transform.position);
+            outerVerts.Add(socket.transform.TransformVector(meshSocket.vertices[i]) + socket.transform.position);
         }
         for(var i = 0; i < meshSocket.triangles.Length; i++)
         {
@@ -155,9 +155,11 @@ public class MeshCasing : MonoBehaviour
         meshOuter.RecalculateTangents();
         meshOuter.RecalculateBounds();
 
-        Socket.transform.position = new Vector3(0, 0, 0);
-        Socket.transform.rotation = Quaternion.identity;
-        Socket.SetActive(false);
+        socket.transform.position = new Vector3(0, 0, 0);
+        socket.transform.rotation = Quaternion.identity;
+        socket.SetActive(false);
+        handle.SetActive(false);
+
     }
 
     /// <summary>
