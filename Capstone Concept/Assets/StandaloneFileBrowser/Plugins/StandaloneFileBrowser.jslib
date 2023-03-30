@@ -9,6 +9,7 @@ var StandaloneFileBrowserWebGLPlugin = {
     //     Custom: ".plist, .xml, .yaml"
     // multiselect: Allows multiple file selection
     UploadFile: function(gameObjectNamePtr, methodNamePtr, filterPtr, multiselect) {
+        // UTF8ToString(ptrToSomeCString)
         gameObjectName = Pointer_stringify(gameObjectNamePtr);
         methodName = Pointer_stringify(methodNamePtr);
         filter = Pointer_stringify(filterPtr);
@@ -44,7 +45,12 @@ var StandaloneFileBrowserWebGLPlugin = {
             SendMessage(gameObjectName, methodName, urls.join());
 
             // Remove after file selected
-            document.body.removeChild(fileInput);
+            try {
+                document.body.removeChild(fileInput);
+            }
+            catch(error) {
+                console.error(error);
+            }
         }
         document.body.appendChild(fileInput);
 

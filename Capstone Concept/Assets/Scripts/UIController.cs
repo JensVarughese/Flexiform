@@ -15,6 +15,7 @@ public class UIController : MonoBehaviour
     public TransformController transformController;
     public CameraController cameraController;
 
+    Button loadHandButton;
     Button generatePanelButton;
     Button cutButton;
     Button socketButton;
@@ -30,7 +31,7 @@ public class UIController : MonoBehaviour
     {
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
 
-        Button loadHandButton = root.Q<Button>("load-hand");
+        loadHandButton = root.Q<Button>("load-hand");
 
         generatePanelButton = root.Q<Button>("generate-casing");
         Button cancelCasingButton = root.Q<Button>("cancel-casing");
@@ -107,6 +108,7 @@ public class UIController : MonoBehaviour
     {
         // do load hand code
         fileExplorer.OpenFileBrowser();
+        loadHandButton.SetEnabled(false);
         generatePanelButton.SetEnabled(true);
     }
 
