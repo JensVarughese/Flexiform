@@ -3,62 +3,92 @@ using System.Linq;
 
 public class CameraController : MonoBehaviour
 {
-    public GameObject handObj;
-    private Transform cameraTransform;
-    private Transform parentTransform;
     [HideInInspector]
-    public Vector3 handCenter { get; private set; }
-    private Vector3? mousePos;
-    private float distance;
+    public GameObject handObj;
+    [HideInInspector]
+    public Vector3? handCenter { get; private set; }
     FileExplorer fileExplorer;
+    private Vector3 fixedPosition;
+    public float distance = 100.0f;
+    public float xSpeed = 5.0f;
+    public float ySpeed = 5.0f;
+    public float yMinLimit = -90f;
+    public float yMaxLimit = 90f;
+    public float distanceMin = 10f;
+    public float distanceMax = 400f;
+    float rotationYAxis = 0.0f;
+    float rotationXAxis = 0.0f;
+    private bool middleButtonPressed = false;
 
-    // Start is called before the first frame update
+
     void Start()
     {
-        cameraTransform = gameObject.GetComponent<Transform>();
-        parentTransform = cameraTransform.parent;
-        //var handTransform = handObj.transform.GetChild(0);
-        //var mesh = handTransform.GetComponent<MeshFilter>().mesh;
-        handCenter = new Vector3(0,0,0);
-        //parentTransform.position = handCenter;
-        //cameraTransform.LookAt(handCenter);
-        //distance = Vector3.Distance(transform.position, handCenter);
-        parentTransform.position = new Vector3(0,0,0);
-        cameraTransform.LookAt(new Vector3(0, 0, 0));
-        distance = Vector3.Distance(transform.position, new Vector3(0, 0, 0));
         fileExplorer = GameObject.Find("FileManager").GetComponent<FileExplorer>();
+
+        Vector3 angles = transform.eulerAngles;
+        rotationYAxis = angles.y;
+        rotationXAxis = angles.x;
+
+        // Make the rigid body not change rotation
+        if (GetComponent<Rigidbody>())
+            GetComponent<Rigidbody>().freezeRotation = true;
+
+        // Clone the target's position so that it stays fixed
+        fixedPosition = Vector3.zero;
     }
 
     // Putting all start up code in new function
-    public void StartUp()
+    public void LookAtHand()
     {
         handObj = fileExplorer.model;
-
-        cameraTransform = gameObject.GetComponent<Transform>();
-        parentTransform = cameraTransform.parent;
         var handTransform = handObj.transform.GetChild(0);
         var mesh = handTransform.GetComponent<MeshFilter>().mesh;
         handCenter = GetCenter(mesh);
-        parentTransform.position = handCenter;
-        cameraTransform.LookAt(handCenter);
-        distance = Vector3.Distance(transform.position, handCenter);
+        fixedPosition = handCenter ?? Vector3.zero;
     }
 
-    // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
-        //Fire2 = Right Click
-        if (Input.GetButton("Fire2"))
+        if(Input.GetKeyUp(KeyCode.R))
         {
-            RotateCamera();
-        }
-        else if (Input.GetButtonUp("Fire2"))
+            fixedPosition = handCenter ?? Vector3.zero;
+            distance = 100.0f;
+        } 
+
+        if (Input.GetMouseButton(1))
         {
-            mousePos = null;
+            rotationYAxis += xSpeed * Input.GetAxis("Mouse X");
+            rotationXAxis -= ySpeed * Input.GetAxis("Mouse Y");
+            rotationXAxis = ClampAngle(rotationXAxis, yMinLimit, yMaxLimit);
         }
 
-        //allows zooming
-        ZoomCamera(Input.mouseScrollDelta.y);
+        if(Input.GetMouseButtonDown(2))
+            middleButtonPressed = true;
+        if (Input.GetMouseButtonUp(2))
+            middleButtonPressed = false;
+        if(middleButtonPressed)
+        {
+            var xTranslation = Vector3.Cross(transform.forward, transform.up) * Input.GetAxis("Mouse X") * distance / 100.0f;
+            var yTranslation = transform.up * Input.GetAxis("Mouse Y") * - 1 * distance / 100.0f;
+            fixedPosition += xTranslation + yTranslation;
+        }
+
+        Quaternion rotation = Quaternion.Euler(rotationXAxis, rotationYAxis, 0);
+        distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel") * distance, distanceMin, distanceMax);
+        Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
+        Vector3 position = rotation * negDistance + fixedPosition;
+
+        transform.rotation = rotation;
+        transform.position = position;
+    }
+
+    public static float ClampAngle(float angle, float min, float max)
+    {
+        if (angle < -360F)
+            angle += 360F;
+        if (angle > 360F)
+            angle -= 360F;
+        return Mathf.Clamp(angle, min, max);
     }
 
     public Vector3 GetCameraPostion()
@@ -78,63 +108,5 @@ public class CameraController : MonoBehaviour
         var maxZ = verts.Select(v => v.z).Max();
 
         return new Vector3((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2);
-    }
-
-    private void RotateCamera()
-    {
-        if (mousePos is null)
-        {
-            mousePos = Input.mousePosition;
-            return;
-        }
-
-        // mouse position after the rotation is done
-        var newMousePos = Input.mousePosition;
-
-        //calculate mouse position differences and angle to rotate
-        var diffX = (mousePos?.x ?? 1) - newMousePos.x;
-        var diffY = (mousePos?.y ?? 1) - newMousePos.y;
-        var xRot = transform.eulerAngles.x;
-
-        //edge cases for boundaries
-        var edgeCase1 = isBet(xRot, 70, 180) && diffY < 0;
-        var edgeCase2 = isBet(xRot, 180, 290) && diffY > 0;
-
-        if (isBet(xRot, -1, 70) || isBet(xRot, 290, 360) || edgeCase1 || edgeCase2) 
-        {
-            parentTransform.Rotate(-diffY / 2.0f, -diffX / 2.0f, 0.0f, Space.Self);
-        }
-
-        cameraTransform.LookAt(handCenter);
-
-        //set mouse position
-        mousePos = newMousePos;
-    }
-
-    private void ZoomCamera(float scrollAmount) 
-    {
-        if(scrollAmount == 0)
-            return;
-
-        // bound checking
-        if(distance >= 500 && scrollAmount < 0)
-            return;
-        else if(distance <= 50 && scrollAmount > 0)
-            return;
-
-        transform.Translate(Vector3.forward * scrollAmount * distance / 20);
-        if (handCenter == null)
-        {
-            distance = Vector3.Distance(transform.position, new Vector3(0,0,0));
-        }
-        else
-        {
-            distance = Vector3.Distance(transform.position, handCenter);
-        }
-    }
-
-    private bool isBet(float num, int p1, int p2)
-    {
-        return num >= p1 && num <= p2;
     }
 }

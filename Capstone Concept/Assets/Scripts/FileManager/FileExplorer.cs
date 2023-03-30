@@ -80,7 +80,7 @@ public class FileExplorer: MonoBehaviour
             //model.transform.GetChild(0).tag = "SliceableInner";
             //
             cameraController = GameObject.Find("Main Camera").GetComponent<CameraController>();
-            cameraController.StartUp();
+            cameraController.LookAtHand();
         }
     }
 
