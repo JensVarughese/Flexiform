@@ -38,10 +38,8 @@ public class CameraController : MonoBehaviour
     }
 
     // Putting all start up code in new function
-    public void LookAtHand()
+    public void LookAtHand(Transform handTransform)
     {
-        handObj = fileExplorer.model;
-        var handTransform = handObj.transform.GetChild(0);
         var mesh = handTransform.GetComponent<MeshFilter>().mesh;
         handCenter = GetCenter(mesh);
         fixedPosition = handCenter ?? Vector3.zero;
