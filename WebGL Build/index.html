@@ -26,7 +26,9 @@
       </div> -->
     </div>
     <div class="loader-wrapper">
-      <object class="FlexiForm-logo" type="image/svg+xml" style="width:20%;height:40%;" data="logo.svg"></object>
+      <div style="width:20%; height:30%;">
+        <object class="FlexiForm-logo" type="image/svg+xml" data="logo.svg"></object>
+      </div>
       <h1 class="FlexiForm">FlexiForm</h1>
     </div>
     <style>
@@ -74,7 +76,7 @@
         codeUrl: buildUrl + "/WebGL.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "Syntesium",
-        productName: "ENEL 500 Capstone",
+        productName: "Flexiform",
         productVersion: "0.1",
         showBanner: unityShowBanner,
       };
@@ -114,12 +116,16 @@
       script.src = loaderUrl;
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
-          progressBarFull.style.width = 100 * progress + "%";
+          //progressBarFull.style.width = 100 * progress + "%";
         }).then((unityInstance) => {
           loadingBar.style.display = "none";
-          setTimeout(removeLoader, 2000);
+          
+          setTimeout(removeLoader, 2500);
           function removeLoader() {
-            $(".loader-wrapper").fadeOut(1000, function () {
+            $(".FlexiForm-logo").fadeOut(250, function () {
+              $(".FlexiForm-logo").remove();
+          });
+            $(".loader-wrapper").fadeOut(500, function () {
               $(".loader-wrapper").remove();
             });
           }
