@@ -4,8 +4,10 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Flexiform</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
+    <link rel="stylesheet" type="text/css" href="styles.css" />
   </head>
   <body>
     <div id="unity-container" style="width: 100%; height: 100%;">
@@ -22,6 +24,10 @@
         <div id="unity-fullscreen-button"></div>
         <div id="unity-build-title">ENEL 500 Capstone</div>
       </div> -->
+    </div>
+    <div class="loader-wrapper">
+      <object class="FlexiForm-logo" type="image/svg+xml" style="width:20%;height:40%;" data="logo.svg"></object>
+      <h1 class="FlexiForm">FlexiForm</h1>
     </div>
     <style>
       body {
@@ -111,9 +117,12 @@
           progressBarFull.style.width = 100 * progress + "%";
         }).then((unityInstance) => {
           loadingBar.style.display = "none";
-          // fullscreenButton.onclick = () => {
-          //   unityInstance.SetFullscreen(1);
-          // };
+          setTimeout(removeLoader, 2000);
+          function removeLoader() {
+            $(".loader-wrapper").fadeOut(1000, function () {
+              $(".loader-wrapper").remove();
+            });
+          }
         }).catch((message) => {
           alert(message);
         });
