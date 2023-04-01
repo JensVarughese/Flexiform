@@ -34,7 +34,7 @@ public class FileExplorer: MonoBehaviour
         if(handLoaded)
             return;
         
-        UploadFile(gameObject.name, "OnFileUpload", ".obj", false);
+        UploadFile(gameObject.name, "OnFileUpload", ".stl", false);
     }
 
     // Called from browser
@@ -68,14 +68,14 @@ public class FileExplorer: MonoBehaviour
             if (model != null)
                 Destroy(model);
 
-            if (path.Substring(path.Length - 4).Equals(".stl"))
-            {
-                 model = LoadStl(www.downloadHandler.data);
-            }
-            else
+            if (path.Substring(path.Length - 4).Equals(".obj"))
             {
                 MemoryStream textStream = new MemoryStream(Encoding.UTF8.GetBytes(www.downloadHandler.text));
                 model = new OBJLoader().Load(textStream);
+            }
+            else
+            {
+                model = LoadStl(www.downloadHandler.data);
             }
 
             handModel = model.transform.GetChild(0);
