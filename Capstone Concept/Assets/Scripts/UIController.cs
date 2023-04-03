@@ -92,7 +92,8 @@ public class UIController : MonoBehaviour
     void SelectSocket(string selection)
     {
         var camCenter = cameraController.GetCameraPostion();
-        var position = (cameraController.handCenter ?? Vector3.zero * 0.75f) + (camCenter * 0.25f);
+        var handCenter = cameraController.handCenter ?? Vector3.zero;
+        var position = (camCenter + handCenter) / 2.0f;
         transformController.LoadSocket(selection, position);
         socketSelectionPanel.style.display = DisplayStyle.None;
         socketTransformPanel.style.display = DisplayStyle.Flex;
@@ -108,7 +109,6 @@ public class UIController : MonoBehaviour
     {
         // do load hand code
         fileExplorer.OpenFileBrowser();
-        loadHandButton.SetEnabled(false);
         generatePanelButton.SetEnabled(true);
     }
 
